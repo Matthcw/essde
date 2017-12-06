@@ -43,7 +43,7 @@ angular.module('essde').controller('checkoutPageController', [
                 location_lat: lat,
                 location_lng: lng,
                 completed: false
-            }, function onError(resData, jwData) {
+            }, function onSuccess(resData, jwData) {
                 console.log(resData);
                 document.location.href = '/order/'+ resData.id;
             });       

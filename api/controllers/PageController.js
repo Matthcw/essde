@@ -12,32 +12,32 @@ module.exports = {
                 me: null
             });
         }
-        return showPage(req, res, 'homepage', function (me) {
+        return showPage(req, res, function (me) {
             return res.redirect('/dashboard');
         });
     },
 
     showDashboardPage: function (req, res) {
         return showPage(req, res, function (me) {
-            return res.view('dashboard', me);
+            return res.view('dashboard', {me: me});
         });
     },
 
     showOrdersPage: function (req, res) {
         return showPage(req, res, function (me) {
-            return res.view('orders', me);
+            return res.view('orders', {me: me});
         });
     },
 
     showMakeOrderPage: function (req, res) {
         return showPage(req, res, function (me) {
-            return res.view('makeorder', me);
+            return res.view('makeorder', {me: me});
         });
     },
 
     showCheckoutPage: function (req, res) {
         return showPage(req, res, function (me) {
-            return res.view('checkout', me);
+            return res.view('checkout', {me: me});
         });
     },
 
@@ -54,7 +54,7 @@ module.exports = {
                 if (req.param('id') == ownOrder.id) {
                     return showPage(req, res, function (me) {
                         return res.view('orderitem', {
-                            me: me,
+                            me,
                             order: {
                                 id: ownOrder.id,
                                 userId: ownOrder.userId
@@ -75,7 +75,7 @@ module.exports = {
 
                 return showPage(req, res, function (me) {
                     return res.view('orderitem', {
-                        me: me,
+                        me,
                         order: {
                             id: order.id,
                             userId: order.userId
@@ -91,7 +91,7 @@ module.exports = {
                 me: null
             });
         }
-        return showPage(req, res, 'signup', function (me) {
+        return showPage(req, res, function (me) {
             return res.redirect('/dashboard');
         });
     },
@@ -99,12 +99,8 @@ module.exports = {
         User.findOne({ id: req.session.userId }).exec(function (err, user) {
             if (err) return res.negotiate(err);
 
-            return res.view('admin', {
-                me: {
-                    id: user.id,
-                    email: user.email,
-                    admin: user.admin,
-                }
+            return showPage(req, res, function (me) {
+                return res.view('admin', {me: me});
             });
             
         });
@@ -125,11 +121,9 @@ function showPage(req, res, cb) {
 
         // If it gets here, it's a real, existing user 
         cb({
-            me: {
                 id: user.id,
                 email: user.email,
-                admin: user.admin,
-            }
+                admin: user.admin,     
         });
 
     });

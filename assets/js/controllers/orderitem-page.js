@@ -4,7 +4,8 @@ angular.module('essde').controller('orderItemPageController', [
     '$scope', '$http', '$timeout',
     function ($scope, $http, $timeout) {
 
-        $scope.orderId = window.SAILS_LOCALS.orderId;
+        $scope.me = window.SAILS_LOCALS.me;        
+        $scope.orderId = window.SAILS_LOCALS.order.id;
         $scope.complete = false;
 
         $http.get('/api/v1/order/' + $scope.orderId)
