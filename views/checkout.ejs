@@ -1,0 +1,18 @@
+<style>
+  #map-checkout {
+    height: 400px;
+    width: 100%;
+  }
+</style>
+<div class="container bg-light" ng-controller="checkoutPageController">
+  <h1 class="display-3">Checkout</h1>
+  <h4>Items:</h4>
+  <p ng-repeat="basketItem in basket">{{basketItem.items}} - £{{basketItem.price}}
+    <a href="#" ng-click="removeFromBasket(basketItem.id)">x</a>
+  </p>
+  <h4>Fee:</h4>
+  <p>Delivery Fee: {{basket.length > 4 ? '£3.00' : '£1.50'}}</p>
+  <h4>Location:</h4>
+  <div id="map-checkout"></div>
+  <button class="btn btn-warning btn-lg" id="btn-order" type="button" ng-click="orderItems()">Order</button>
+</div>

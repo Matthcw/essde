@@ -1,0 +1,1 @@
+angular.module('essde').controller('homePageController', [ function(){}]);

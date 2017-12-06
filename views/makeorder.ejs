@@ -1,0 +1,29 @@
+  <div class="container-fluid" ng-controller="orderPageController">
+    <div class="row">
+      <div class="col-8 pt-5 px-5">
+        <h1 class="display-4">What would you like from <em>Essentials</em>?</h1>
+        <div class="input-group">
+          <input type="text" class="form-control" id="basketItem" placeholder="milk, cereal"
+          ng-model="basketItem">
+          <span class="input-group-btn">
+                <button class="btn btn-warning" id="btn-add-to-basket" type="button"
+                ng-click="addToBasket()">Add To Basket</button>
+            </span>
+        </div>
+      </div>
+      <div class="col-4 p-2 bg-light">
+        <h2 class="display-6">Basket</h2>
+        <div class="order-summary-mini">
+          <p>Items:</p>
+          <p ng-repeat="basketItem in basket">{{basketItem.items}} - £{{basketItem.price}}
+            <a href="#" ng-click="removeFromBasket(basketItem.id)">x</a>
+          </p>
+          <p>Fee: {{basket.length > 4 ? '£3.00' : '£1.50'}}</p>
+          <p>Your Location:(Google Maps)</p>
+        </div>
+        <a class="btn btn-warning" href="/order/checkout/">Checkout</a>
+      </div>
+    </div>
+
+
+  </div>

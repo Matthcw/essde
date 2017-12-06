@@ -1,0 +1,51 @@
+<style>
+  #map-orderitem {
+    height: 400px;
+    width: 100%;
+  }
+</style>
+  <div class="container-fluid" ng-controller="orderItemPageController" ng-cloak>
+    <div class="row">
+      <div class="col-4 pt-5 px-5">
+        <h1 class="display-3">Order #{{order.id}}</h1>
+        <h4>Items:</h4>
+        <ul>
+        <li ng-repeat="orderItem in order.items">{{orderItem}}</li>
+        </ul>
+        <h4>Item Total:</h4>
+        <p class-"display-4">£{{order.price}}</p>
+        <h4>Delivery Fee:</h4>
+        <p class="text-success font-weight-bold">{{order.items.length > 4 ? '£3.00' : '£1.50'}}</p>
+        
+        <p>Templeman Library (East)</p>
+
+        <button class="btn btn-lg" id="btn-complete" type="button"
+        ng-click="markOrderComplete()" ng-class="{'btn-success': !complete, 'btn-faded': complete}" ng-show="order.userId == me.id">
+        <span ng-hide="complete">Mark as Complete</span>
+        <span ng-show="complete">Mark as Incomplete</span>
+        </button>
+
+        <button class="btn btn-danger btn-lg" id="btn-cancel" type="button"
+        ng-click="cancelDelivery()">Cancel Delivery</button>
+      </div>
+      <div class="col-4 pt-5 px-5">
+          <h4>Deliver To:</h4>
+      <div id="map-orderitem"></div>
+      </div>
+      <div class="col-4 p-2 bg-light">
+        <h2 class="display-6">Chat</h2>
+        
+        <div class="input-group">
+          <input type="text" class="form-control" id="chatBox" placeholder="Where are you?">
+          <span class="input-group-btn">
+                <button class="btn btn-warning" id="btn-send-message" type="button"
+                ng-click="sendMessage()">Send ></button>
+            </span>
+            <div id="chat-window">
+              
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

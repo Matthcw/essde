@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>New Sails App</title>
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/styles/bootstrap.min.css">
+    <link rel="stylesheet" href="/styles/importer.css">
+    <!--STYLES END-->
+    <% if(typeof me == 'undefined') { me = null }  %>
+    <% if(typeof order == 'undefined') { order = null }  %>
+    <script>
+    window.SAILS_LOCALS = { 
+      me: <%- JSON.stringify(me||null) %>,
+      order: <%- JSON.stringify(order||null) %>
+    };     
+    </script>
+  
+  </head>
+  <body ng-app="essde">
+    <%- partial('./partials/navigation.ejs') %>
+    <%- body %>
+    <!--TEMPLATES-->
+    
+    <!--TEMPLATES END-->
+    <!--SCRIPTS-->
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="/js/dependencies/angular.js"></script>
+    <script src="/js/dependencies/angular-route.min.js"></script>
+    <script src="/js/dependencies/angular-toastr.js"></script>
+    <script src="/js/dependencies/compareTo.module.js"></script>
+    <script src="/js/dependencies/jquery-3.2.1.min.js"></script>
+    <script src="/js/dependencies/lodash.js"></script>
+    <script src="/js/checkout-page-map.js"></script>
+    <script src="/js/controllers/admin-page.js"></script>
+    <script src="/js/controllers/checkout-page.js"></script>
+    <script src="/js/controllers/home-page.js"></script>
+    <script src="/js/controllers/nav-page.js"></script>
+    <script src="/js/controllers/order-page.js"></script>
+    <script src="/js/controllers/orderitem-page.js"></script>
+    <script src="/js/controllers/orders-page.js"></script>
+    <script src="/js/controllers/signup-page.js"></script>
+    <!--SCRIPTS END-->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9XcZdi0n1V5iMQlgKH0YIhVlIfIsYwgs&callback=initMap"></script>
+
+  </div>
+</body>
+</html>

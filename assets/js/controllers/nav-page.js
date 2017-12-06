@@ -1,0 +1,58 @@
+angular.module('essde').controller('navPageController', ['$location', '$scope', '$http', 'toastr', function($location, $scope, $http, toastr) {
+    
+      //Set-up loading state
+      $scope.loginForm = {};
+    
+      $scope.me = window.SAILS_LOCALS.me;
+      
+      $scope.submitLoginForm = function() {
+    
+        // Set the loading state (i.e. show loading spinner)
+        $scope.loginForm.loading = true;
+      
+      // Submit request to Sails.
+        $http.put('/login', {
+            email: $scope.loginForm.login,
+            username: $scope.loginForm.login,
+            password: $scope.loginForm.password
+          })
+          .then(function onSuccess() {
+            // Redierct the page now that we've been logged in.
+             window.location = '/dashboard';
+            // window.location = '/';
+            console.log('We have a match!', 'Success', {closeButton: true});
+          })
+          .catch(function onError(sailsResponse) {
+    
+            // Handle known error type(s).        
+            // Deleted account
+            if (sailsResponse.status == 403) {
+              console.error(sailsResponse.data, 'Error', {
+              closeButton: true
+            });
+              return;
+            }
+    
+    
+            // Invalid username / password combination.
+            if (sailsResponse.status === 400 || 404) {
+              // $scope.loginForm.topLevelErrorMessage = 'Invalid email/password combination.';
+              //
+              console.error('Invalid email or username/password combination.', 'Error', {
+                closeButton: true
+              });
+              return;
+            }
+    
+            console.error('An unexpected error occurred, please try again.', 'Error', {
+              closeButton: true
+            });
+            return;
+    
+          })
+          .finally(function eitherWay() {
+            $scope.loginForm.loading = false;
+          });
+      };
+    }]);
+    

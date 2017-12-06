@@ -1,0 +1,48 @@
+addtobasket
+POST /basket
+req
+ {
+ basket_items: []
+ }
+
+res
+ 201
+
+
+getfrombasket
+GET /basket
+
+res
+ 200
+ {
+ basket_items: []
+ }
+
+
+createorder
+POST /order
+
+
+getorders
+GET /order
+
+
+getorder
+GET /order/:id
+
+
+completeorder
+PUT /order/:id
+
+
+cancelorder
+DELETE /order/:id
+
+
+
+
+
+
+
+
+

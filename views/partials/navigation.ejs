@@ -1,0 +1,37 @@
+<div ng-controller="navPageController" ng-cloak>
+
+    <nav class="navbar navbar-dark bg-success">
+        <a class="navbar-brand" href="{{me.id ? '/dashboard' : '/'}} ">Essentials Delivery</a>
+
+
+
+        <!-- The sign-in Form (unauthenticated user state) -->
+        <form ng-hide="me.id" ng-submit="submitLoginForm()" class="form-inline my-2 my-lg-0">
+            <div class="form-group">
+                <input ng-model="loginForm.login" type="text" placeholder="email or username" name="login" class="form-control mr-sm-2">
+            </div>
+            <div class="form-group">
+                <input ng-model="loginForm.password" type="password" placeholder="Password" name="password" class="form-control mr-sm-2">
+            </div>
+            <button type="submit" class="btn btn-warning my-2 my-sm-0">
+                    <span class="fa fa-spinner" style="position: absolute; left: -1000px"></span>
+                    <span ng-show="!loginForm.loading">Sign in</span>
+                    <span ng-show="loginForm.loading" class="fa fa-spinner"></span>
+                    <span ng-show="loginForm.loading">Signing in...</span>
+                    </button>
+            <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+        </form>
+        <!--  Email, and logout link (authenticated user state) -->
+        <ul ng-show="me.id" class="navbar-nav">
+
+            <li class="active nav-item">
+                <a href="/profile" class="pointer nav-link text-right p-0">{{me.email}}</a>
+            </li>
+
+            <li class="nav-item">
+                <a href="/logout" class="pointer nav-link text-right p-0">sign-out</a>
+            </li>
+        </ul>
+
+    </nav>
+</div>
