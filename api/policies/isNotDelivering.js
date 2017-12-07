@@ -1,5 +1,4 @@
 module.exports = function isNotDelivering(req, res, next) {
-    sails.log.debug(`UserId=${req.session.userId} is in isNotDelivering()`);
     
     
     Order.findOne({ deliverUserId: req.session.userId }).exec(function (err, order) {
@@ -7,7 +6,7 @@ module.exports = function isNotDelivering(req, res, next) {
         
         if (!order) {
             // User has no active delivery
-            sails.log.debug('Calling next() from isNotDelivering()');                          
+            sails.log.debug(`not delivering {UserId:${req.session.userId}}`);                          
             return next();
             
         } else {
@@ -17,7 +16,7 @@ module.exports = function isNotDelivering(req, res, next) {
                 return res.forbidden('You are not permitted to perform this action.');
             }
             //Redirect to order
-            sails.log.debug(`Redirecting to /order/${order.id} from isNotDelivering()`);                            
+            sails.log.debug(`Redirecting {UserId:${req.session.userId}} to /order/${order.id} from isNotDelivering()`);                            
             return res.redirect('/order/' + order.id);   
         }        
     });

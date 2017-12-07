@@ -1,5 +1,4 @@
 module.exports = function isAdmin(req, res, next) {
-    sails.log.debug(`UserId=${req.session.userId} is in isAdmin()`);
     
     
     if(!req.session.userId) {
@@ -19,7 +18,7 @@ module.exports = function isAdmin(req, res, next) {
                 sails.log.debug('Returning 403 from from isAdmin()');                                                            
                 return res.forbidden('You are not permitted to perform this action.');
             }
-            sails.log.debug('Redirecting to / from isAdmin()');                
+            sails.log.debug(`Redirecting {UserId:${req.session.userId}} to / from isLoggedIn()`);            
             return res.redirect('/');
         }        
 
@@ -28,11 +27,11 @@ module.exports = function isAdmin(req, res, next) {
                 sails.log.debug('Returning 403 from from isAdmin()');                                                                            
                 return res.forbidden('You are not permitted to perform this action.');
             }
-            sails.log.debug('Redirecting to /dashboard from isAdmin()');                            
+            sails.log.debug(`Redirecting {UserId:${req.session.userId}} to / from isLoggedIn()`);            
             return res.redirect('/dashboard');
         }
 
-        sails.log.debug('Calling next() from isAdmin()');            
+        sails.log.debug(`is admin {UserId:${req.session.userId}}`);                                  
         return next();
     });
 }
