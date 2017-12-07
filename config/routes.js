@@ -31,7 +31,7 @@ module.exports.routes = {
     'GET /basket': 'BasketController.find',
     'POST /basket': 'BasketController.create',
     'DELETE /basket': 'BasketController.destroy',
-
+    
     'POST /user/signup': 'UserController.signup',
     'GET /user/admin': 'UserController.adminUsers',
     'PUT /user/admin/:id': 'UserController.updateAdmin',

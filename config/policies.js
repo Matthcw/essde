@@ -36,7 +36,7 @@ module.exports.policies = {
 
   OrderController: {
     find: ['isLoggedIn'],
-    create: ['isLoggedIn', 'isNotOrdering'],
+    create: ['isLoggedIn', 'isNotOrdering', 'isNotDelivering'],
     destroy: ['isLoggedIn']
   },
   
@@ -52,12 +52,12 @@ module.exports.policies = {
 
   PageController: {
     showSignupPage: ['isLoggedOut'],
-    showDashboardPage: ['isLoggedIn', 'isNotOrdering'],
-    showOrdersPage: ['isLoggedIn', 'isNotOrdering'],
-    showMakeOrderPage: ['isLoggedIn', 'isNotOrdering'],
+    showDashboardPage: ['isLoggedIn', 'isNotOrdering', 'isNotDelivering'],
+    showOrdersPage: ['isLoggedIn', 'isNotOrdering', 'isNotDelivering'],
+    showMakeOrderPage: ['isLoggedIn', 'isNotOrdering', 'isNotDelivering'],
     showOrderItemPage: ['isLoggedIn'],
-    showCheckoutPage: ['isLoggedIn', 'isNotOrdering'],
-    showCheckoutPage: ['isLoggedIn', 'isNotOrdering'],
+    showCheckoutPage: ['isLoggedIn', 'isNotOrdering', 'isNotDelivering'],
+    showCheckoutPage: ['isLoggedIn', 'isNotOrdering', 'isNotDelivering'],
     showAdminPage: ['isLoggedIn', 'isAdmin']
   }
   

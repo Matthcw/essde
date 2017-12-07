@@ -7,6 +7,8 @@
 
 module.exports = {
 
+  migrate: 'drop',
+  
   schema: 'true',
 
   attributes: {

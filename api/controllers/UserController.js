@@ -184,10 +184,16 @@ module.exports = {
                     if (userFound.deleted) return res.forbidden("Your account has been deleted.");
                     if (userFound.banned) return res.forbidden("You've been banned.");
                     req.session.userId = userFound.id;
+
                     // Clear any orders they made but were never completed
                     Order.destroy({userId: userFound.id}).exec(function (err, order) {
                         if(err) return res.negotiate(err);
                     });
+                    // Clear any orders they were delivering but were never completed
+                    Order.update({deliverUserId: userFound.id}, {deliverUserId: null}).exec(function (err, order) {
+                        if(err) return res.negotiate(err);
+                    });
+
                     return res.ok();
                 }
             })
@@ -203,9 +209,14 @@ module.exports = {
 
             req.session.userId = null;
 
+            // Clear any orders they made but were never completed            
             Order.destroy({userId: user.id}).exec(function (err, order) {
                 if(err) return res.negotiate(err);
-            });            
+            }); 
+            // Clear any orders they were delivering but were never completed
+            Order.update({deliverUserId: user.id}, {deliverUserId: null}).exec(function (err, order) {
+                if(err) return res.negotiate(err);
+            });           
 
             res.redirect('/');
         });
