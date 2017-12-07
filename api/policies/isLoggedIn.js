@@ -11,6 +11,6 @@ module.exports = function isLoggedIn(req, res, next) {
         return res.forbidden('You are not permitted to perform this action.');
     }
 
-    sails.log.debug(`Redirecting {UserId:${req.session.userId}} to / from isLoggedIn()`);
+    sails.log.debug(`Redirecting user to / from isLoggedIn()`);
     return res.redirect('/');
 }

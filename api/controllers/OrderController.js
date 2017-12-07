@@ -61,12 +61,6 @@ module.exports = {
     destroy: function (req, res) {  
         sails.log.debug(`OrderController.destroy() {UserId:${req.session.userId}} `);                                                                          
         
-        OrderService.deleteOrder({
-            req: req,
-            res: res
-        });
-       
-
-        
+        OrderService.deleteOrder({req: req, res: res});
     }
 };
