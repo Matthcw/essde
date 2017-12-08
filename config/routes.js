@@ -1,3 +1,4 @@
+
 module.exports.routes = {
     /*
     * Server-rendered HTML Page
@@ -24,17 +25,18 @@ module.exports.routes = {
     'PUT /login': 'UserController.login',
     'GET /logout': 'UserController.logout',
     
-    'GET /order': 'OrderController.find',
-    'POST /order': 'OrderController.create',
-    'DELETE /order': 'OrderController.destroy',
+    'GET /api/v1/order': 'OrderController.findOrders', // Either find all orders, or find order associated with me
+    'POST /api/v1/order': 'OrderController.createOrder',
+    'DELETE /api/v1/order': 'OrderController.destroyOrder',
 
-    'GET /basket': 'BasketController.find',
-    'POST /basket': 'BasketController.create',
-    'DELETE /basket': 'BasketController.destroy',
+    'GET /api/v1/basket': 'BasketController.findItems',
+    'POST /api/v1/basket': 'BasketController.createItem',
+    'DELETE /api/v1/basket/:id': 'BasketController.destroyItem',
+    'DELETE /basket': 'BasketController.destroyItems',
     
-    'POST /user/signup': 'UserController.signup',
-    'GET /user/admin': 'UserController.adminUsers',
-    'PUT /user/admin/:id': 'UserController.updateAdmin',
-    'PUT /user/banned/:id': 'UserController.updateBanned',
-    'PUT /user/deleted/:id': 'UserController.updateDeleted'
+    'POST /api/v1/user/signup': 'UserController.signup',
+    'GET /api/v1/user/admin': 'UserController.adminUsers',
+    'PUT /api/v1/user/admin/:id': 'UserController.updateAdmin',
+    'PUT /api/v1/user/banned/:id': 'UserController.updateBanned',
+    'PUT /api/v1/user/deleted/:id': 'UserController.updateDeleted'
 }   

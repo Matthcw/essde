@@ -29,15 +29,15 @@ module.exports.policies = {
   // '*': true,
 
   BasketController: {
-    find: ['isLoggedIn'],
-    create: ['isLoggedIn'],
-    destroy: ['isLoggedIn']
+    findItems: ['isLoggedIn'],
+    createItem: ['isLoggedIn'],
+    destroyItem: ['isLoggedIn']
   },
 
   OrderController: {
-    find: ['isLoggedIn'],
-    create: ['isLoggedIn', 'isNotOrdering', 'isNotDelivering'],
-    destroy: ['isLoggedIn']
+    findOrders: ['isLoggedIn'],
+    createOrder: ['isLoggedIn', 'isNotOrdering', 'isNotDelivering'],
+    destroyOrder: ['isLoggedIn']
   },
   
   UserController: {

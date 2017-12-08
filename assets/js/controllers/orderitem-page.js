@@ -15,12 +15,12 @@ angular.module('essde').controller('orderItemPageController', [
             orderId: $scope.orderId
         }, function onSuccess(resData, jwData) {
             console.log(resData);
-            
+
             // Set: $scope.hasDeliverer, $scope.wasDeliverer, $scope.orderDeleted, $scope.orderComplete
             
         });       
 
-        $http.get('/api/v1/order/' + $scope.orderId)
+        $http.get('/api/v1/order/')
             .then(function onSuccess(sailsResponse) {
                 console.log(sailsResponse.data);
                 lat = sailsResponse.data.location_lat
@@ -65,7 +65,7 @@ angular.module('essde').controller('orderItemPageController', [
 
 
         $scope.markOrderComplete = function () {
-            $http.delete('/api/v1/order/' + $scope.orderId)
+            $http.delete('/api/v1/order/')
                 .then(function onSuccess(sailsResponse) {
                     document.location.href = '/dashboard';
                 })
@@ -77,7 +77,7 @@ angular.module('essde').controller('orderItemPageController', [
 
         $scope.cancelDelivery = function () {
 
-            $http.delete('/api/v1/order/' + $scope.orderId)
+            $http.delete('/api/v1/order/')
                 .then(function onSuccess(sailsResponse) {
                     if ($scope.order.userId == window.SAILS_LOCALS.me.id) {
                         document.location.href = '/dashboard';
