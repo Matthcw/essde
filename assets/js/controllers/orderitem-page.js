@@ -8,6 +8,18 @@ angular.module('essde').controller('orderItemPageController', [
         $scope.orderId = window.SAILS_LOCALS.order.id;
         $scope.complete = false;
 
+        // TODO: Code to check order affiliated with this user's userId  
+        // TODO: Send this page's orderId to db to poll for the: deliveryUserId, deleted, and completed flags
+        
+        io.socket.get('/api/v1/order/', {
+            orderId: $scope.orderId
+        }, function onSuccess(resData, jwData) {
+            console.log(resData);
+            
+            // Set: $scope.hasDeliverer, $scope.wasDeliverer, $scope.orderDeleted, $scope.orderComplete
+            
+        });       
+
         $http.get('/api/v1/order/' + $scope.orderId)
             .then(function onSuccess(sailsResponse) {
                 console.log(sailsResponse.data);

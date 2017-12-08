@@ -34,6 +34,10 @@ module.exports = {
     completed: {
       type: 'boolean',
       defaultsTo: 'false'
+    },
+    deleted: {
+      type: 'boolean',
+      defaultsTo: 'false'
     }
   }
 };
