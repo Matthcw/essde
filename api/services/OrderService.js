@@ -55,7 +55,7 @@ module.exports = {
     },
 
     deleteOrder: function (options, done) {
-        const req = options.res;
+        const req = options.req;
         const res = options.res;
 
         sails.log.debug(`delete order associated with {UserId:${req.session.userId}}`);
@@ -67,7 +67,7 @@ module.exports = {
         Order.findOne({
             or: [
                 { userId: req.session.userId },
-                { deliverUserId: req.session.userIdUserId }
+                { deliverUserId: req.session.userId }
             ]
         }).exec(function (err, order) {
             if (err) return res.negotiate(err);
