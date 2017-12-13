@@ -26,15 +26,24 @@ angular.module('essde').controller('orderItemPageController', [
             console.log("Chat successfully joined" + resData);
         });
 
+        // New message received from server
         io.socket.on('chat', function (e) {
             console.log('new Chat received', e)
-            $scope.chats.push(e.message);
-            $scope.apply();
+            console.log(e.userId);
+            console.log($scope.me.id);
+            prefix = (e.userId == $scope.me.id) ? 'You: ' : 'Them: ';
+
+            $scope.chats.push({message: prefix + e.message});
+            $scope.$apply();
         });
 
         $scope.sendMessage = function () {
 
-            $scope.chats.push({message: "Hi"});
+            io.socket.post('/api/v1/order/chat', {
+                message: $scope.chatMessage
+            }, function onSuccess(resData, jwData) {
+                //$scope.chats.push({message: "Hi"});
+            });
             
         }
 

@@ -37,7 +37,9 @@ module.exports.policies = {
   OrderController: {
     findOrders: ['isLoggedIn'],
     createOrder: ['isLoggedIn', 'isNotOrdering', 'isNotDelivering'],
-    destroyOrder: ['isLoggedIn']
+    destroyOrder: ['isLoggedIn'],
+    joinChat: ['isLoggedIn'],
+    chat: ['isLoggedIn']
   },
   
   UserController: {

@@ -63,10 +63,11 @@ module.exports = {
             }            
             
             sails.sockets.broadcast('order' + order.id, 'chat', {
-                message: req.param('message')
+                message: req.param('message'),
+                userId: req.session.userId
             });
 
-            sails.log.debug(`User messaged in order chat            
+            sails.log.debug(`User sent message in order chat            
             {UserId:${req.session.userId}, OrderId:${req.param('id')}}`);
 
             return res.json({chat: 'messaged'});
