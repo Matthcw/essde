@@ -29,10 +29,6 @@ module.exports = {
       type: 'boolean',
       defaultsTo: 'false'
     },
-    chats: {
-      collection: 'chat',
-      via: 'sender'
-    },
     admin: {
       type: 'boolean',
       defaultsTo: 'false'

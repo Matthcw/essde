@@ -95,6 +95,7 @@ angular.module('essde').controller('orderItemPageController', [
 
 
         $scope.markOrderComplete = function () {
+            // Change to socket connection
             $http.delete('/api/v1/order/')
                 .then(function onSuccess(sailsResponse) {
                     document.location.href = '/dashboard';
@@ -106,7 +107,7 @@ angular.module('essde').controller('orderItemPageController', [
         }
 
         $scope.cancelDelivery = function () {
-
+            // Change to socket connection
             $http.delete('/api/v1/order/')
                 .then(function onSuccess(sailsResponse) {
                     if ($scope.order.userId == window.SAILS_LOCALS.me.id) {
