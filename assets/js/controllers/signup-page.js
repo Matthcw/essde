@@ -14,7 +14,7 @@ angular.module('essde').controller('signupPageController', ['$scope', '$http', '
         // $http.post('/user/signup', {
     
         // Submit a POST request to /user [This is using blueprints.]
-        $http.post('/user/signup', {
+        $http.post('/api/v1/user/signup', {
           email: $scope.signupForm.email,
           password: $scope.signupForm.password
         })

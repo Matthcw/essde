@@ -24,10 +24,13 @@ module.exports.routes = {
     */
     'PUT /login': 'UserController.login',
     'GET /logout': 'UserController.logout',
+
+    'POST /api/v1/chat': 'ChatController.sendMessage',
     
     'GET /api/v1/order': 'OrderController.findOrders', // Either find all orders, or find order associated with me
     'POST /api/v1/order': 'OrderController.createOrder',
     'DELETE /api/v1/order': 'OrderController.destroyOrder',
+    'PUT /api/v1/order/joinchat': 'OrderController.joinChat',
 
     'GET /api/v1/basket': 'BasketController.findItems',
     'POST /api/v1/basket': 'BasketController.createItem',

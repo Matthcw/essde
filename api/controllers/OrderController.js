@@ -7,11 +7,78 @@
 
 module.exports = {
 
+    joinChat: function (req, res) {
+        if (!req.isSocket) {
+            sails.log.debug(`not a socket connection joinChat()`);
+            
+            return res.badRequest();
+        }
+
+        sails.log.debug(`User attempting to join an order's chat
+        {UserId:${req.session.userId}}`);
+        
+        // Only join chat rooms with a users order
+        Order.findOne({
+            or: [
+                { userId: req.session.userId },
+                { deliverUserId: req.session.userId }]
+        }).exec(function (err, order) {
+            if (err) return res.negotiate(err);
+
+            if (!order) {
+                sails.log.debug(`User has no order chat to join {UserId:${req.session.userId}}`);
+                return res.notFound();
+            }            
+            
+            sails.sockets.join(req, 'order' + order.id);
+
+            sails.log.debug(`User joined order chat            
+            {UserId:${req.session.userId}, OrderId:${req.param('id')}}`);
+
+            return res.json({chat: 'joined'});
+        });
+
+    },
+
+    chat: function (req, res) {
+        if (!req.isSocket) {
+            sails.log.debug(`not a socket connection chat()`);
+            
+            return res.badRequest();
+        }
+
+        sails.log.debug(`User attempting to send a message
+        {UserId:${req.session.userId}}`);
+        // Only send chat messages to rooms with a users order
+        Order.findOne({
+            or: [
+                { userId: req.session.userId },
+                { deliverUserId: req.session.userId }]
+        }).exec(function (err, order) {
+            if (err) return res.negotiate(err);
+
+            if (!order) {
+                sails.log.debug(`User has no order chat to message in {UserId:${req.session.userId}}`);
+                return res.notFound();
+            }            
+            
+            sails.sockets.broadcast('order' + order.id, 'chat', {
+                message: req.param('message')
+            });
+
+            sails.log.debug(`User messaged in order chat            
+            {UserId:${req.session.userId}, OrderId:${req.param('id')}}`);
+
+            return res.json({chat: 'messaged'});
+        });
+
+    },
+
     findOrders: function (req, res) {
         sails.log.debug(`OrderController.findOrders() {UserId:${req.session.userId}}`);
-        
+
         OrderService.findOrders({ req: req, res: res });
-        
+
     },
 
     createOrder: function (req, res) {

@@ -31,6 +31,10 @@ module.exports = {
       type: 'integer',
       defaultsTo: null
     },
+    chats: {
+      collection: 'chat',
+      via: 'order'
+    },
     completed: {
       type: 'boolean',
       defaultsTo: 'false'

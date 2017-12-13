@@ -6,6 +6,7 @@
  */
 var Emailaddresses = require('machinepack-emailaddresses');
 var Passwords = require('machinepack-passwords');
+var Mailgun = require('machinepack-mailgun');
 
 module.exports = {
     signup: function (req, res) {
@@ -19,6 +20,25 @@ module.exports = {
             return res.badRequest('Password must be at least 6 characters!');
         }
 
+        Mailgun.sendPlaintextEmail({
+            apiKey: sails.config.mailgun.apiKey,
+            domain: sails.config.mailgun.domain,
+            toEmail: 'matthcw@hotmail.co.uk',
+            subject: 'Account Confirmation',
+            message: 'Account Confirmation Email',
+            fromEmail: 'admin@essde.co.uk',
+            fromName: 'admin@essde.co.uk',
+        }).exec({
+            error: function (err) {
+                if(err) return res.negotiate(err);
+                console.log(err);
+            },
+            success: function () {
+                return res.ok();
+            }
+        });
+
+        
         Emailaddresses.validate({
             string: req.param('email')
         }).exec({

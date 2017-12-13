@@ -7,22 +7,44 @@ angular.module('essde').controller('orderItemPageController', [
         $scope.me = window.SAILS_LOCALS.me;
         $scope.orderId = window.SAILS_LOCALS.order.id;
         $scope.complete = false;
+        $scope.chats = [];
 
         // TODO: Code to check order affiliated with this user's userId  
         // TODO: Send this page's orderId to db to poll for the: deliveryUserId, deleted, and completed flags
-        
+
         io.socket.get('/api/v1/order/', {
             orderId: $scope.orderId
         }, function onSuccess(resData, jwData) {
             console.log(resData);
 
             // Set: $scope.hasDeliverer, $scope.wasDeliverer, $scope.orderDeleted, $scope.orderComplete
+
+        });
+
+        // Join room
+        io.socket.put('/api/v1/order/joinchat', function onSuccess(resData, jwData) {
+            console.log("Chat successfully joined" + resData);
+        });
+
+        io.socket.on('chat', function (e) {
+            console.log('new Chat received', e)
+            $scope.chats.push(e.message);
+            $scope.apply();
+        });
+
+        $scope.sendMessage = function () {
+
+            $scope.chats.push({message: "Hi"});
             
-        });       
+        }
+
 
         $http.get('/api/v1/order/')
             .then(function onSuccess(sailsResponse) {
                 console.log(sailsResponse.data);
+
+                $scope.order = sailsResponse.data;
+
                 lat = sailsResponse.data.location_lat
                 lng = sailsResponse.data.location_lng
 
@@ -57,7 +79,6 @@ angular.module('essde').controller('orderItemPageController', [
 
                 });
 
-                $scope.order = sailsResponse.data;
             })
             .catch(function onError(sailsResponse) {
                 console.error("An unexpected error occured " + sailsResponse.statusText);
@@ -90,6 +111,7 @@ angular.module('essde').controller('orderItemPageController', [
                 });
 
         }
+
 
     }
 ]);

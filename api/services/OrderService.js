@@ -1,6 +1,6 @@
 module.exports = {
 
-    findOrders: function (options, done) {
+    findOrders: function (options) {
         const req = options.req;
         const res = options.res;
         
@@ -35,7 +35,7 @@ module.exports = {
         });
     },      
 
-    createOrder: function (options, done) {
+    createOrder: function (options) {
 
         const req = options.req;
         const res = options.res;
@@ -54,7 +54,7 @@ module.exports = {
 
     },
 
-    deleteOrder: function (options, done) {
+    deleteOrder: function (options) {
         const req = options.req;
         const res = options.res;
 
