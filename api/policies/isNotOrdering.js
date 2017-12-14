@@ -1,6 +1,10 @@
 module.exports = function isNotOrdering(req, res, next) {
     
-    Order.findOne({ userId: req.session.userId }).exec(function (err, order) {
+    Order.findOne({ 
+        userId: req.session.userId, 
+        completed: false,
+        deleted: false
+     }).exec(function (err, order) {
         if (err) return res.negotiate(err);
     
         if (!order) {

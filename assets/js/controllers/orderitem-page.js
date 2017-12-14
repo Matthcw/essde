@@ -26,25 +26,44 @@ angular.module('essde').controller('orderItemPageController', [
         $scope.complete = false;
         $scope.chats = [];
 
+        $scope.hasOrderer = true // always true if this is the orderer and is true by default
+        $scope.hasDeliverer = ($scope.order.userId != $scope.me.id) ? true : false; // always true if this is the deliverer
+        $scope.wasDeliverer = ($scope.order.userId != $scope.me.id) ? true : false; // always true if this is the deliverer
+        $scope.orderDeleted = false;
+        $scope.orderComplete = false;
+
         // TODO: Code to check order affiliated with this user's userId  
         // TODO: Send this page's orderId to db to poll for the: deliveryUserId, deleted, and completed flags
 
-        io.socket.get('/api/v1/order/', {
-            orderId: $scope.orderId
-        }, function onSuccess(resData, jwData) {
-            console.log(resData);
+        // When a delivering user joins
+        io.socket.on('delivererjoined', function () {
+            $scope.hasDeliverer = true;
+            console.log("deliverer joined");
+        });
 
-            // Set: 
+        // When a delivering user leaves
+        io.socket.on('delivererleft', function () {
             $scope.hasDeliverer = false;
-            $scope.wasDeliverer = false;
-            $scope.orderDeleted = false;
-            $scope.orderComplete = false;
+            console.log("deliverer left");
+        });
 
+        // When an ordering user leaves
+        io.socket.on('ordererleft', function () {
+            $scope.hasOrderer = false;
+            $scope.orderDeleted = true;        
+            console.log("orderer left");
+        });
+
+        // When an ordering user marks order as complete
+        io.socket.on('ordercomplete', function () {
+            $scope.hasOrderer = false;
+            $scope.orderComplete = true;        
+            console.log("orderer complete");
         });
 
         // Join room
         io.socket.put('/api/v1/order/joinchat', function onSuccess(resData, jwData) {
-            console.log("Chat successfully joined" + resData);
+            console.log("Chat successfully joined: " + resData.chat);
         });
 
         // New message received from server
@@ -62,9 +81,7 @@ angular.module('essde').controller('orderItemPageController', [
 
             io.socket.post('/api/v1/order/chat', {
                 message: $scope.chatMessage
-            }, function onSuccess(resData, jwData) {
-                //$scope.chats.push({message: "Hi"});
-            });
+            }, function onSuccess(resData, jwData) {});
 
         }
 
@@ -94,8 +111,8 @@ angular.module('essde').controller('orderItemPageController', [
             // New location has come through, clear time out if it's set
             clearTimeout(timeout);
             console.log('new Location received', e);
-            //return false;
-            moveDeliveryUserMarker({ coords: { lat: e.lat, lng: e.lng } });
+            return false;
+            //moveDeliveryUserMarker({ coords: { lat: e.lat, lng: e.lng } });
             //Remove marker after 5 seconds though
             timeout = setTimeout(function () {
                 marker.setMap(null);

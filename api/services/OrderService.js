@@ -7,13 +7,14 @@ module.exports = {
         // When ordering or delivering the only order they can find is their own
         // If they have an order, go to that, if they don't, go to any order
         Order.findOne({
-            or: [
-                { userId: req.session.userId },
-                { deliverUserId: req.session.userId }
-            ],
-        }).where({
-            completed: false,
-            deleted: false
+            where: {
+                completed: false,
+                deleted: false,
+                or: [
+                    { userId: req.session.userId },
+                    { deliverUserId: req.session.userId }
+                ]
+            }
         }).exec(function (err, order) {
             if (err) return res.negotiate(err);
 
@@ -28,7 +29,11 @@ module.exports = {
             } else {
                 // User has no order
                 // Only retrive orders that aren't currently being delivered
-                Order.find({ deliverUserId: null }).exec(function (err, otherOrder) {
+                Order.find({ 
+                    deliverUserId: null,
+                    completed: false,
+                    deleted: false
+                 }).exec(function (err, otherOrder) {
                     if (err) return res.negotiate(err);
                     sails.log.debug(`user has no order or delivery return all open orders {UserId:${req.session.userId}}`);
                     return res.json(otherOrder);
@@ -95,14 +100,15 @@ module.exports = {
                 // Can only complete order if they are they are the one ordering
                 if (order.userId == req.session.userId) {
                     // Clear any orders they have started
-                    Order.update({ userId: req.session.userId }, { completed: true }).exec(function (err, order) {
+                    Order.update({ userId: req.session.userId }, { completed: true }).exec(function (err, completedOrder) {
                         if (err) return res.negotiate(err);
-                        if (order) {
+                        if (completedOrder) {
 
                             // Notify delivering user that order has been completed
+                            sails.sockets.broadcast('order' + order.id, 'ordercomplete');                            
 
                             sails.log.debug(`complete own order successful {OrderId:${order.id}, UserId:${req.session.userId}}`);
-                            return res.json(order);
+                            return res.json(completedOrder);
                         }
                     });
                 }
@@ -142,26 +148,28 @@ module.exports = {
 
                 if (order.userId == req.session.userId) {
                     // Clear any orders they have started
-                    Order.update({ userId: req.session.userId }, { deleted: true }).exec(function (err, order) {
+                    Order.update({ userId: req.session.userId }, { deleted: true }).exec(function (err, deletedOrder) {
                         if (err) return res.negotiate(err);
-                        if (order) {
+                        if (deletedOrder) {
 
                             // Notify delivering user that order has been cancelled
+                            sails.sockets.broadcast('order' + order.id, 'ordererleft');
 
                             sails.log.debug(`delete own order successful {OrderId:${order.id}, UserId:${req.session.userId}}`);
-                            return res.json(order);
+                            return res.json(deletedOrder);
                         }
                     });
                 } else {
                     // Clear any orders they were delivering but were never completed
-                    Order.update({ deliverUserId: req.session.userId }, { deliverUserId: null }).exec(function (err, order) {
+                    Order.update({ deliverUserId: req.session.userId }, { deliverUserId: null }).exec(function (err, deletedOrder) {
                         if (err) return res.negotiate(err);
-                        if (order) {
+                        if (deletedOrder) {
 
-                            // Notify delivering user that order has been cancelled
+                            // Notify ordering user that delivering user has left
+                            sails.sockets.broadcast('order' + order.id, 'delivererleft');
                             
                             sails.log.debug(`delete delivery user successful {OrderId:${order.id}, UserId:${req.session.userId}}`);
-                            return res.json(order);
+                            return res.json(deletedOrder);
                         }
                     });
                 }

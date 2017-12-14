@@ -47,6 +47,8 @@ module.exports = {
         // Check if user has their own order/delivery first,
         // redirect to that instead
         Order.findOne({
+            completed: false,
+            deleted: false,
             or: [
                 { userId: req.session.userId },
                 { deliverUserId: req.session.userId }, /// Change this to check for your delivery OR order, if you have none, go back to /orders, you shouldnt be on this page otherwise
@@ -85,7 +87,11 @@ module.exports = {
 
             // This is not their own order, so check if order exists, before loading 
             // order on the orderitem page
-            Order.findOne({ id: req.param('id') }).exec(function (err, order) {
+            Order.findOne({ 
+                id: req.param('id'),
+                completed: false,
+                deleted: false,
+             }).exec(function (err, order) {
                 if (err) return res.negotiate(err);
 
                 if (!order) {
@@ -111,6 +117,7 @@ module.exports = {
                         if (err) return res.negotiate(err);
 
                         // socket broadcast to room of: order.id, that a user has connected 
+                        sails.sockets.broadcast('order' + order.id, 'delivererjoined');
 
                         return showPage(req, res, function (me) {
                             return res.view('orderitem', {

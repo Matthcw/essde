@@ -8,7 +8,7 @@ angular.module('essde').controller('ordersPageController', [
                 console.error("An error occurred in the Socket connection attempt");
                 return;
             }
-
+           
             $scope.orders = data;
             $scope.$apply();            
 
@@ -21,6 +21,8 @@ angular.module('essde').controller('ordersPageController', [
                 $scope.$apply();
                 
             });
+
+            console.log( $scope.orders);
 
         });
     }

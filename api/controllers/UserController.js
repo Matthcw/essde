@@ -30,7 +30,7 @@ module.exports = {
             fromName: 'admin@essde.co.uk',
         }).exec({
             error: function (err) {
-                if(err) return res.negotiate(err);
+                if (err) return res.negotiate(err);
                 console.log(err);
             },
             success: function () {
@@ -38,7 +38,7 @@ module.exports = {
             }
         });
 
-        
+
         Emailaddresses.validate({
             string: req.param('email')
         }).exec({
@@ -136,45 +136,45 @@ module.exports = {
     },
 
     updateAdmin: function (req, res) {
-            if (!req.param('id')) return res.badRequest('`id` is a required parameter.');
+        if (!req.param('id')) return res.badRequest('`id` is a required parameter.');
 
-            User.update({
-                id: req.param('id')
-            }, {
-                    admin: req.param('admin')
-                }).exec(function (err, userUpdated) {
-                    if (err) return res.negotiate(err);
-                    if (userUpdated.length === 0) return res.notFound();
-                    return res.ok();
-                });
+        User.update({
+            id: req.param('id')
+        }, {
+                admin: req.param('admin')
+            }).exec(function (err, userUpdated) {
+                if (err) return res.negotiate(err);
+                if (userUpdated.length === 0) return res.notFound();
+                return res.ok();
+            });
     },
 
     updateBanned: function (req, res) {
-            if (!req.param('id')) return res.badRequest('`id` is a required parameter.');
+        if (!req.param('id')) return res.badRequest('`id` is a required parameter.');
 
-            User.update({
-                id: req.param('id')
-            }, {
-                    banned: req.param('banned')
-                }).exec(function (err, userUpdated) {
-                    if (err) return res.negotiate(err);
-                    if (userUpdated.length === 0) return res.notFound();
-                    return res.ok();
-                });
+        User.update({
+            id: req.param('id')
+        }, {
+                banned: req.param('banned')
+            }).exec(function (err, userUpdated) {
+                if (err) return res.negotiate(err);
+                if (userUpdated.length === 0) return res.notFound();
+                return res.ok();
+            });
     },
 
     updateDeleted: function (req, res) {
-            if (!req.param('id')) return res.badRequest('`id` is a required parameter.');
+        if (!req.param('id')) return res.badRequest('`id` is a required parameter.');
 
-            User.update({
-                id: req.param('id')
-            }, {
-                    deleted: req.param('deleted')
-                }).exec(function (err, userUpdated) {
-                    if (err) return res.negotiate(err);
-                    if (userUpdated.length === 0) return res.notFound();
-                    return res.ok();
-                });
+        User.update({
+            id: req.param('id')
+        }, {
+                deleted: req.param('deleted')
+            }).exec(function (err, userUpdated) {
+                if (err) return res.negotiate(err);
+                if (userUpdated.length === 0) return res.notFound();
+                return res.ok();
+            });
     },
 
     login: function (req, res) {
@@ -206,12 +206,12 @@ module.exports = {
                     req.session.userId = userFound.id;
 
                     // Clear any orders they made but were never completed
-                    Order.destroy({userId: userFound.id}).exec(function (err, order) {
-                        if(err) return res.negotiate(err);
+                    Order.update({ userId: userFound.id }, { deleted: true }).exec(function (err, order) {
+                        if (err) return res.negotiate(err);
                     });
                     // Clear any orders they were delivering but were never completed
-                    Order.update({deliverUserId: userFound.id}, {deliverUserId: null}).exec(function (err, order) {
-                        if(err) return res.negotiate(err);
+                    Order.update({ deliverUserId: userFound.id }, { deliverUserId: null }).exec(function (err, order) {
+                        if (err) return res.negotiate(err);
                     });
 
                     return res.ok();
@@ -224,19 +224,19 @@ module.exports = {
     logout: function (req, res) {
 
         User.findOne({ id: req.session.userId }).exec(function (err, user) {
-            if(err) res.negotiate(err);
-            if(!user) sails.log.verbose('Session refers to a user who no longer exists');
+            if (err) res.negotiate(err);
+            if (!user) sails.log.verbose('Session refers to a user who no longer exists');
 
             req.session.userId = null;
 
             // Clear any orders they made but were never completed            
-            Order.destroy({userId: user.id}).exec(function (err, order) {
-                if(err) return res.negotiate(err);
-            }); 
+            Order.update({ userId: user.id }, { deleted: true }).exec(function (err, order) {
+                if (err) return res.negotiate(err);
+            });
             // Clear any orders they were delivering but were never completed
-            Order.update({deliverUserId: user.id}, {deliverUserId: null}).exec(function (err, order) {
-                if(err) return res.negotiate(err);
-            });           
+            Order.update({ deliverUserId: user.id }, { deliverUserId: null }).exec(function (err, order) {
+                if (err) return res.negotiate(err);
+            });
 
             res.redirect('/');
         });
@@ -244,7 +244,7 @@ module.exports = {
     },
 
     adminUsers: function (req, res) {
-        User.find({admin: true}).exec(function(err, usersFound){
+        User.find({ admin: true }).exec(function (err, usersFound) {
             if (err) return res.negotiate(err);
 
             return res.json(usersFound);

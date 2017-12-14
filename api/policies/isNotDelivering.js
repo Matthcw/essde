@@ -1,7 +1,11 @@
 module.exports = function isNotDelivering(req, res, next) {
     
     
-    Order.findOne({ deliverUserId: req.session.userId }).exec(function (err, order) {
+    Order.findOne({ 
+        deliverUserId: req.session.userId,
+        completed: false,
+        deleted: false
+     }).exec(function (err, order) {
         if (err) return res.negotiate(err);
         
         if (!order) {

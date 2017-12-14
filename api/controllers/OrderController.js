@@ -35,7 +35,7 @@ module.exports = {
             sails.log.debug(`User joined order chat            
             {UserId:${req.session.userId}, OrderId:${req.param('id')}}`);
 
-            return res.json({chat: 'joined'});
+            return res.json({chat: 'order' + order.id});
         });
 
     },
@@ -130,7 +130,7 @@ module.exports = {
     completeOrder: function (req, res) {
         sails.log.debug(`OrderController.completeOrder() {UserId:${req.session.userId}}`);
 
-        OrderService.deleteOrder({ req: req, res: res });
+        OrderService.completeOrder({ req: req, res: res });
     },
 
     deleteOrder: function (req, res) {
