@@ -47,7 +47,7 @@ module.exports = {
             return res.badRequest();
         }
 
-        sails.log.debug(`User attempting to send a message
+        sails.log.debug(`User attempting to send a chat message
         {UserId:${req.session.userId}}`);
         // Only send chat messages to rooms with a users order
         Order.findOne({
@@ -58,7 +58,7 @@ module.exports = {
             if (err) return res.negotiate(err);
 
             if (!order) {
-                sails.log.debug(`User has no order chat to message in {UserId:${req.session.userId}}`);
+                sails.log.debug(`User has no order to message in {UserId:${req.session.userId}}`);
                 return res.notFound();
             }            
             
@@ -67,12 +67,47 @@ module.exports = {
                 userId: req.session.userId
             });
 
-            sails.log.debug(`User sent message in order chat            
+            sails.log.debug(`User sent chat message in order            
             {UserId:${req.session.userId}, OrderId:${req.param('id')}}`);
 
             return res.json({chat: 'messaged'});
         });
 
+    },
+
+    deliveryUserLocation: function (req, res) {
+        if (!req.isSocket) {
+            sails.log.debug(`not a socket connection chat()`);
+            
+            return res.badRequest();
+        }
+
+        sails.log.debug(`User attempting to send a location message
+        {UserId:${req.session.userId}}`);
+
+        // Only location messages to rooms with a users order
+        Order.findOne({
+            or: [
+                { userId: req.session.userId },
+                { deliverUserId: req.session.userId }]
+        }).exec(function (err, order) {
+            if (err) return res.negotiate(err);
+
+            if (!order) {
+                sails.log.debug(`User has no order to message in {UserId:${req.session.userId}}`);
+                return res.notFound();
+            }            
+            
+            sails.sockets.broadcast('order' + order.id, 'location', {
+                lat: req.param('lat'),
+                lng: req.param('lng'),
+            });
+
+            sails.log.debug(`User sent location message in order            
+            {UserId:${req.session.userId}, OrderId:${req.param('id')}}`);
+
+            return res.json({location: 'sent'});
+        });
     },
 
     findOrders: function (req, res) {
@@ -83,7 +118,7 @@ module.exports = {
     },
 
     createOrder: function (req, res) {
-        sails.log.debug(`OrderController.createOrder() {UserId:${req.session.userId}} `);
+        sails.log.debug(`OrderController.createOrder() {UserId:${req.session.userId}}`);
 
         /* isNotOrdering Policy */
         /* isNotDelivering Policy */
@@ -92,8 +127,14 @@ module.exports = {
 
     },
 
-    destroyOrder: function (req, res) {
-        sails.log.debug(`OrderController.destroyOrder() {UserId:${req.session.userId}} `);
+    completeOrder: function (req, res) {
+        sails.log.debug(`OrderController.completeOrder() {UserId:${req.session.userId}}`);
+
+        OrderService.deleteOrder({ req: req, res: res });
+    },
+
+    deleteOrder: function (req, res) {
+        sails.log.debug(`OrderController.deleteOrder() {UserId:${req.session.userId}}`);
 
         OrderService.deleteOrder({ req: req, res: res });
     }

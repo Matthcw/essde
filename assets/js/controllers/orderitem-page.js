@@ -1,3 +1,20 @@
+// New map
+
+var map;
+
+// Add Delivery User Marker Function
+var marker;
+function moveDeliveryUserMarker(props) {
+    if (marker) {
+        marker.setPosition(props.coords);
+    } else {
+        marker = new google.maps.Marker({
+            position: props.coords,
+            map: map,
+        });
+    }
+}
+
 
 
 angular.module('essde').controller('orderItemPageController', [
@@ -5,7 +22,7 @@ angular.module('essde').controller('orderItemPageController', [
     function ($scope, $http, $timeout) {
 
         $scope.me = window.SAILS_LOCALS.me;
-        $scope.orderId = window.SAILS_LOCALS.order.id;
+        $scope.order = window.SAILS_LOCALS.order;
         $scope.complete = false;
         $scope.chats = [];
 
@@ -17,7 +34,11 @@ angular.module('essde').controller('orderItemPageController', [
         }, function onSuccess(resData, jwData) {
             console.log(resData);
 
-            // Set: $scope.hasDeliverer, $scope.wasDeliverer, $scope.orderDeleted, $scope.orderComplete
+            // Set: 
+            $scope.hasDeliverer = false;
+            $scope.wasDeliverer = false;
+            $scope.orderDeleted = false;
+            $scope.orderComplete = false;
 
         });
 
@@ -33,7 +54,7 @@ angular.module('essde').controller('orderItemPageController', [
             console.log($scope.me.id);
             prefix = (e.userId == $scope.me.id) ? 'You: ' : 'Them: ';
 
-            $scope.chats.push({message: prefix + e.message});
+            $scope.chats.push({ message: prefix + e.message });
             $scope.$apply();
         });
 
@@ -44,8 +65,44 @@ angular.module('essde').controller('orderItemPageController', [
             }, function onSuccess(resData, jwData) {
                 //$scope.chats.push({message: "Hi"});
             });
-            
+
         }
+
+        if ($scope.order.userId != $scope.me.id) {
+            // Must be the delivery user
+            var timer = setInterval(function () {
+                if (!navigator.geolocation) return alert("No location access. Use a better browser bro...");
+
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    lat = position.coords.latitude;
+                    lng = position.coords.longitude;
+                }); 
+
+                io.socket.post('/api/v1/order/map', {
+                    lat: lat,
+                    lng: lng
+                }, function onSuccess(resData, jwData) {
+                    
+                });
+
+            }, 5000)
+        }
+
+        // New message received from server
+        var timeout;
+        io.socket.on('location', function (e) {
+            // New location has come through, clear time out if it's set
+            clearTimeout(timeout);
+            console.log('new Location received', e);
+            //return false;
+            moveDeliveryUserMarker({ coords: { lat: e.lat, lng: e.lng } });
+            //Remove marker after 5 seconds though
+            timeout = setTimeout(function () {
+                marker.setMap(null);
+                marker = null;
+                console.log("remove marker");
+            }, 5500)
+        });
 
 
         $http.get('/api/v1/order/')
@@ -67,24 +124,14 @@ angular.module('essde').controller('orderItemPageController', [
                         center: { lat: lat, lng: lng }
                     };
 
-                    // New map
-                    var map = new google.maps.Map(document.getElementById('map-orderitem'), options);
-                    addMarker({ coords: { lat: lat, lng: lng } });
-
-
-                    var marker;
-                    // Add Marker Function
-                    function addMarker(props) {
-                        if (marker) {
-                            marker.setPosition(props.coords);
-                        } else {
-                            marker = new google.maps.Marker({
-                                position: props.coords,
-                                map: map,
-                                icon: "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
-                            });
-                        }
-                    }
+                    map = new google.maps.Map(document.getElementById('map-orderitem'), options);
+                    
+                    // Add peremanent marker as delivery location
+                    new google.maps.Marker({
+                        position: {lat, lng},
+                        map: map,
+                        icon: "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+                    });
 
                 });
 
@@ -93,10 +140,9 @@ angular.module('essde').controller('orderItemPageController', [
                 console.error("An unexpected error occured " + sailsResponse.statusText);
             });
 
-
         $scope.markOrderComplete = function () {
             // Change to socket connection
-            $http.delete('/api/v1/order/')
+            $http.put('/api/v1/order/')
                 .then(function onSuccess(sailsResponse) {
                     document.location.href = '/dashboard';
                 })

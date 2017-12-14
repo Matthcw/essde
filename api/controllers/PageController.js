@@ -110,6 +110,8 @@ module.exports = {
                     Order.update({id: order.id}, { deliverUserId: req.session.userId }).exec(function (err, updatedOrder) {
                         if (err) return res.negotiate(err);
 
+                        // socket broadcast to room of: order.id, that a user has connected 
+
                         return showPage(req, res, function (me) {
                             return res.view('orderitem', {
                                 me,

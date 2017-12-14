@@ -27,11 +27,13 @@ module.exports.routes = {
     
     'GET /api/v1/order': 'OrderController.findOrders', // Either find all orders, or find order associated with me
     'POST /api/v1/order': 'OrderController.createOrder',
-    'DELETE /api/v1/order': 'OrderController.destroyOrder',
+    'PUT /api/v1/order': 'OrderController.completeOrder',
+    'DELETE /api/v1/order': 'OrderController.deleteOrder',
 
     'PUT /api/v1/order/joinchat': 'OrderController.joinChat',
     'POST /api/v1/order/chat': 'OrderController.chat',
-
+    'POST /api/v1/order/map': 'OrderController.deliveryUserLocation',
+    
     'GET /api/v1/basket': 'BasketController.findItems',
     'POST /api/v1/basket': 'BasketController.createItem',
     'DELETE /api/v1/basket/:id': 'BasketController.destroyItem',
