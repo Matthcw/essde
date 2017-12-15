@@ -19,8 +19,11 @@
         (hasDeliverer == true, wasDeliverer == true, completed == false, deleted == true) -->
   <!-- orderer completes the delivery [Order Complete!] orderId on page is marked as complete 
         (hasDeliverer == true, wasDeliverer == true, completed == false, deleted == true) -->
-  <div class="row">
+    <p ng-hide="hasDeliverer">Waiting for deliverer...</p>
+    <p ng-show="orderDeleted">Order deleted <a href="/orders"> go back</a></p>
+    <p ng-show="orderCompleted">Order Complete! <a href="/orders"> go back</a></p>
 
+  <div class="row" ng-show="hasOrderer">
     <div class="col-4 pt-5 px-5">
       <h1 class="display-3">Order #{{order.id}}</h1>
       <h4>Items:</h4>
@@ -35,11 +38,12 @@
       <p>Templeman Library (East)</p>
 
       <button class="btn btn-lg" id="btn-complete" type="button" ng-click="markOrderComplete()" ng-class="{'btn-success': !complete, 'btn-faded': complete}"
-        ng-show="order.userId == me.id">
+        ng-show="order.userId == me.id && hasDeliverer">
         <span ng-hide="complete">Mark as Complete</span>
         <span ng-show="complete">Mark as Incomplete</span>
+        
       </button>
-
+      <span ng-hide="hasDeliverer">Waiting for Deliverer...</span>
       <button class="btn btn-danger btn-lg" id="btn-cancel" type="button" ng-click="cancelDelivery()">Cancel Delivery</button>
     </div>
     <div class="col-4 pt-5 px-5">

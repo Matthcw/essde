@@ -73,6 +73,7 @@ module.exports = {
         }).exec(function (err, order) {
             if (err) return res.negotiate(err);
             sails.log.debug(`create new order {OrderId:${order.id}, UserId:${req.session.userId}}`);
+            sails.sockets.broadcast('vieworders', 'neworder', order);
             return res.json(order);
         });
 
@@ -89,7 +90,9 @@ module.exports = {
 
         //Search database for existing order associated with this user
         Order.findOne({
-            userId: req.session.userId
+            userId: req.session.userId,
+            completed: false,
+            deleted: false
         }).exec(function (err, order) {
             if (err) return res.negotiate(err);
 
@@ -105,7 +108,8 @@ module.exports = {
                         if (completedOrder) {
 
                             // Notify delivering user that order has been completed
-                            sails.sockets.broadcast('order' + order.id, 'ordercomplete');                            
+                            sails.sockets.broadcast('order' + order.id, 'ordercomplete');
+                            sails.sockets.broadcast('vieworders', 'ordercompleted', order.id);
 
                             sails.log.debug(`complete own order successful {OrderId:${order.id}, UserId:${req.session.userId}}`);
                             return res.json(completedOrder);
@@ -135,6 +139,8 @@ module.exports = {
 
         //Search database for existing order associated with this user
         Order.findOne({
+            completed: false,
+            deleted: false,
             or: [
                 { userId: req.session.userId },
                 { deliverUserId: req.session.userId }
@@ -154,6 +160,8 @@ module.exports = {
 
                             // Notify delivering user that order has been cancelled
                             sails.sockets.broadcast('order' + order.id, 'ordererleft');
+                            sails.sockets.broadcast('vieworders', 'orderdeleted', order.id);
+                            
 
                             sails.log.debug(`delete own order successful {OrderId:${order.id}, UserId:${req.session.userId}}`);
                             return res.json(deletedOrder);
@@ -167,6 +175,7 @@ module.exports = {
 
                             // Notify ordering user that delivering user has left
                             sails.sockets.broadcast('order' + order.id, 'delivererleft');
+                            sails.sockets.broadcast('vieworders', 'delivererunassigned', order);                            
                             
                             sails.log.debug(`delete delivery user successful {OrderId:${order.id}, UserId:${req.session.userId}}`);
                             return res.json(deletedOrder);

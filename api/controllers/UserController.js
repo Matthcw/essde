@@ -229,6 +229,7 @@ module.exports = {
 
             req.session.userId = null;
 
+            // TODO: Use the deleteOrder service instead of this
             // Clear any orders they made but were never completed            
             Order.update({ userId: user.id }, { deleted: true }).exec(function (err, order) {
                 if (err) return res.negotiate(err);

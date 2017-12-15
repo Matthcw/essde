@@ -30,7 +30,8 @@ module.exports.routes = {
     'PUT /api/v1/order': 'OrderController.completeOrder',
     'DELETE /api/v1/order': 'OrderController.deleteOrder',
 
-    'PUT /api/v1/order/joinchat': 'OrderController.joinChat',
+    'PUT /api/v1/order/joinorderitemroom': 'OrderController.joinOrderItemsRoom',
+    'PUT /api/v1/order/joinviewordersroom': 'OrderController.joinViewOrdersRoom',
     'POST /api/v1/order/chat': 'OrderController.chat',
     'POST /api/v1/order/map': 'OrderController.deliveryUserLocation',
     

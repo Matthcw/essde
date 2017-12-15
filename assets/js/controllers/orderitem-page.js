@@ -32,39 +32,58 @@ angular.module('essde').controller('orderItemPageController', [
         $scope.orderDeleted = false;
         $scope.orderComplete = false;
 
-        // TODO: Code to check order affiliated with this user's userId  
-        // TODO: Send this page's orderId to db to poll for the: deliveryUserId, deleted, and completed flags
+        // Initialise state variables based on order, on page load
+        $http.get('/api/v1/order/')
+        .then(function onSuccess(sailsResponse) {
+            data = sailsResponse.data;
+            $scope.hasOrderer = (data.deleted || data.completed) ? false : true// always true if this is the orderer and is true by default
+            $scope.hasDeliverer = (data.deliverUserId) ? true : false; // always true if this is the deliverer
+            $scope.orderDeleted = data.deleted;
+            $scope.orderComplete = data.completed;
+            console.log(data);
+            console.log("order data.deliverUserId: " + JSON.stringify(data.deliverUserId));
+        })
+        .catch(function onError(data) {
+            console.error("An unexpected error occured " + sailsResponse.statusText);
+        });
+
+
+        // Join room
+        io.socket.put('/api/v1/order/joinorderitemroom', function onSuccess(resData, jwData) {
+            console.log("Chat successfully joined: " + resData.chat);
+        });
 
         // When a delivering user joins
         io.socket.on('delivererjoined', function () {
             $scope.hasDeliverer = true;
+            $scope.$apply();
             console.log("deliverer joined");
         });
 
         // When a delivering user leaves
         io.socket.on('delivererleft', function () {
             $scope.hasDeliverer = false;
+            $scope.$apply();
             console.log("deliverer left");
         });
 
         // When an ordering user leaves
         io.socket.on('ordererleft', function () {
             $scope.hasOrderer = false;
-            $scope.orderDeleted = true;        
+            $scope.orderDeleted = true;
+            $scope.$apply();            
             console.log("orderer left");
         });
 
         // When an ordering user marks order as complete
         io.socket.on('ordercomplete', function () {
             $scope.hasOrderer = false;
-            $scope.orderComplete = true;        
+            $scope.orderCompleted = true;
+            $scope.$apply();            
             console.log("orderer complete");
         });
 
-        // Join room
-        io.socket.put('/api/v1/order/joinchat', function onSuccess(resData, jwData) {
-            console.log("Chat successfully joined: " + resData.chat);
-        });
+        
 
         // New message received from server
         io.socket.on('chat', function (e) {
@@ -81,7 +100,7 @@ angular.module('essde').controller('orderItemPageController', [
 
             io.socket.post('/api/v1/order/chat', {
                 message: $scope.chatMessage
-            }, function onSuccess(resData, jwData) {});
+            }, function onSuccess(resData, jwData) { });
 
         }
 
@@ -93,13 +112,13 @@ angular.module('essde').controller('orderItemPageController', [
                 navigator.geolocation.getCurrentPosition(function (position) {
                     lat = position.coords.latitude;
                     lng = position.coords.longitude;
-                }); 
+                });
 
                 io.socket.post('/api/v1/order/map', {
                     lat: lat,
                     lng: lng
                 }, function onSuccess(resData, jwData) {
-                    
+
                 });
 
             }, 5000)
@@ -142,10 +161,10 @@ angular.module('essde').controller('orderItemPageController', [
                     };
 
                     map = new google.maps.Map(document.getElementById('map-orderitem'), options);
-                    
+
                     // Add peremanent marker as delivery location
                     new google.maps.Marker({
-                        position: {lat, lng},
+                        position: { lat, lng },
                         map: map,
                         icon: "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
                     });

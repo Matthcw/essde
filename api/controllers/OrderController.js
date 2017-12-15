@@ -7,18 +7,20 @@
 
 module.exports = {
 
-    joinChat: function (req, res) {
+    joinOrderItemsRoom: function (req, res) {
         if (!req.isSocket) {
-            sails.log.debug(`not a socket connection joinChat()`);
+            sails.log.debug(`not a socket connection joinOrderItemsRoom()`);
             
             return res.badRequest();
         }
 
-        sails.log.debug(`User attempting to join an order's chat
+        sails.log.debug(`User attempting to join an orderitem room
         {UserId:${req.session.userId}}`);
         
         // Only join chat rooms with a users order
         Order.findOne({
+            completed: false,
+            deleted: false,
             or: [
                 { userId: req.session.userId },
                 { deliverUserId: req.session.userId }]
@@ -26,18 +28,33 @@ module.exports = {
             if (err) return res.negotiate(err);
 
             if (!order) {
-                sails.log.debug(`User has no order chat to join {UserId:${req.session.userId}}`);
+                sails.log.debug(`User has no orderitem room to join {UserId:${req.session.userId}}`);
                 return res.notFound();
             }            
             
             sails.sockets.join(req, 'order' + order.id);
 
-            sails.log.debug(`User joined order chat            
+            sails.log.debug(`User joined orderitem room            
             {UserId:${req.session.userId}, OrderId:${req.param('id')}}`);
 
-            return res.json({chat: 'order' + order.id});
+            return res.json({room: 'order' + order.id});
         });
 
+    },
+
+    joinViewOrdersRoom: function (req, res) {
+        if (!req.isSocket) {
+            sails.log.debug(`not a socket connection joinViewOrdersRoom()`);
+            
+            return res.badRequest();
+        }
+
+        sails.sockets.join(req, 'vieworders');
+        
+        sails.log.debug(`User joined the orders room            
+        {UserId:${req.session.userId}, OrderId:${req.param('id')}}`);
+
+        return res.json({room: 'vieworders'});
     },
 
     chat: function (req, res) {
@@ -51,6 +68,8 @@ module.exports = {
         {UserId:${req.session.userId}}`);
         // Only send chat messages to rooms with a users order
         Order.findOne({
+            completed: false,
+            deleted: false,
             or: [
                 { userId: req.session.userId },
                 { deliverUserId: req.session.userId }]
@@ -77,7 +96,7 @@ module.exports = {
 
     deliveryUserLocation: function (req, res) {
         if (!req.isSocket) {
-            sails.log.debug(`not a socket connection chat()`);
+            sails.log.debug(`not a socket connection deliveryUserLocation()`);
             
             return res.badRequest();
         }
@@ -87,6 +106,8 @@ module.exports = {
 
         // Only location messages to rooms with a users order
         Order.findOne({
+            completed: false,
+            deleted: false,
             or: [
                 { userId: req.session.userId },
                 { deliverUserId: req.session.userId }]

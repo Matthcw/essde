@@ -118,6 +118,7 @@ module.exports = {
 
                         // socket broadcast to room of: order.id, that a user has connected 
                         sails.sockets.broadcast('order' + order.id, 'delivererjoined');
+                        sails.sockets.broadcast('vieworders', 'delivererassigned', order.id);                        
 
                         return showPage(req, res, function (me) {
                             return res.view('orderitem', {

@@ -39,7 +39,8 @@ module.exports.policies = {
     createOrder: ['isLoggedIn', 'isNotOrdering', 'isNotDelivering'],
     completeOrder: ['isLoggedIn'],
     deleteOrder: ['isLoggedIn'],
-    joinChat: ['isLoggedIn'],
+    joinOrderItemsRoom: ['isLoggedIn'],
+    joinViewOrdersRoom: ['isLoggedIn'],
     chat: ['isLoggedIn']
   },
   
