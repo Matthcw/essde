@@ -10,7 +10,7 @@ module.exports = {
   migrate: 'drop',
   
   schema: 'true',
-
+  
   attributes: {
     price: {
       type: 'float'
@@ -19,7 +19,7 @@ module.exports = {
       type: 'string'
     },
     userId: {
-      type: 'integer'
+      type: 'objectid'
     }
   }
 

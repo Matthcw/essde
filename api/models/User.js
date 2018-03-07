@@ -12,7 +12,10 @@ module.exports = {
   schema: 'true',
 
   attributes: {
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     email: {
       type: 'string',
       email: 'true',

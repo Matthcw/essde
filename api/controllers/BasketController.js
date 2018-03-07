@@ -15,21 +15,22 @@ module.exports = {
     },
 
     createItem: function (req, res) {
+        sails.log.debug('typeof req.session.userId ' + typeof Basket.mongo.objectId(req.session.userId));
         Basket.create({
             price: req.param('price'),
             items: req.param('items'),
-            userId: req.session.userId
-        }).exec(function(err, basketItem) {          
+            userId: Basket.mongo.objectId(req.session.userId)
+        }).exec(function(err, basketItem) {  
+            console.log(err);        
             if(err) return res.negotiate(err);
             sails.log.debug(`user added item to basket {BasketItem:${basketItem.items}, UserId:${req.session.userId}}`);                       
             return res.json(basketItem)
-        })
-        
+        })        
     },
 
     destroyItem: function (req, res) {
         Basket.destroy({
-            id: req.param('id'),
+            id: Basket.mongo.objectId(req.param('id')),
             userId: req.session.userId
         }).exec(function(err, basketItem) {
             if(err) return res.negotiate(err);

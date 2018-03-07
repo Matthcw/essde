@@ -163,7 +163,8 @@ module.exports = {
 
 function showPage(req, res, cb) {
 
-    User.findOne({ id: req.session.userId }).exec(function (err, user) {
+    //Find out why the session and database thing aren't matching
+    User.findOne({ id: User.mongo.objectId(req.session.userId)}).exec(function (err, user) {
         if (err) return res.negotiate(err);
 
         if (!user) {
