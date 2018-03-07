@@ -12,7 +12,10 @@ module.exports = {
   schema: 'true',
 
   attributes: {
-
+    id: {
+      type: 'integer',
+      autoIncrement: true
+    },
     email: {
       type: 'string',
       email: 'true',

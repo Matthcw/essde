@@ -12,6 +12,10 @@ module.exports = {
   schema: 'true',
 
   attributes: {
+    id: {
+      type: 'integer',
+      autoIncrement: true
+    },
     price: {
       type: 'float'
     },
