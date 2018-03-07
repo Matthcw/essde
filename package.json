@@ -1,7 +1,7 @@
 {
   "name": "essde_api",
   "private": true,
-  "version": "0.0.0",
+  "version": "9.7.1",
   "description": "a Sails application",
   "keywords": [],
   "dependencies": {
@@ -19,13 +19,15 @@
     "grunt-sails-linker": "~0.10.1",
     "grunt-sync": "0.5.2",
     "include-all": "^1.0.0",
+    "load-grunt-tasks": "^3.5.2",
     "machinepack-emailaddresses": "^0.4.0",
     "machinepack-mailgun": "^0.6.0",
     "machinepack-passwords": "^2.3.0",
     "rc": "1.0.1",
     "sails": "~0.12.14",
     "sails-disk": "~0.10.9",
-    "sails-generate-static": "^0.11.3"
+    "sails-generate-static": "^0.11.3",
+    "sails-mongo": "^0.12.2"
   },
   "scripts": {
     "debug": "node debug app.js",

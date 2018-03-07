@@ -32,6 +32,8 @@ module.exports.connections = {
     adapter: 'sails-disk'
   },
 
+
+
   /***************************************************************************
   *                                                                          *
   * MySQL is the world's most popular relational database.                   *
@@ -63,6 +65,18 @@ module.exports.connections = {
   //   user: 'username', //optional
   //   password: 'password', //optional
   //   database: 'your_mongo_db_name_here' //optional
+  // },
+
+  myMongoDbServer: {
+    adapter: 'sails-mongo',
+    url: process.env.MONGODB_URI,
+    //ssl: true
+  },
+
+  // myMongoDbServer: {
+  //   adapter: 'sails-mongo',
+  //   host: 'localhost',
+  //   database: 'localhost'
   // },
 
   /***************************************************************************
