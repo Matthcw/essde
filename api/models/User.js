@@ -11,9 +11,12 @@ module.exports = {
 
   schema: 'true',
 
+  autoPK: false,
+
   attributes: {
     id: {
       type: 'integer',
+      primaryKey: true,
       autoIncrement: true
     },
     email: {
