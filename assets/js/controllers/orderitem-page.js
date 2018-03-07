@@ -164,7 +164,7 @@ angular.module('essde').controller('orderItemPageController', [
 
                     // Add peremanent marker as delivery location
                     new google.maps.Marker({
-                        position: { lat, lng },
+                        position: { lat: lat, lng: lng },
                         map: map,
                         icon: "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
                     });

@@ -20,34 +20,37 @@ module.exports.bootstrap = function (cb) {
   }).exec(function (err, userFound) {
     if (userFound) {
       return cb();
-    }
-  });
+    } else {
 
-  Passwords.encryptPassword({
-    password: '111111'
-  }).exec({
-    error: function (err) { return cb(err) },
-    success: function (encryptedPassword) {
+      Passwords.encryptPassword({
+        password: '111111'
+      }).exec({
+        error: function (err) { console.log("2"); return cb(err) },
+        success: function (encryptedPassword) {
 
-
-      User.create([{
-        email: 'admin@gmail.com',
-        password: encryptedPassword,
-        admin: true
-      },{
-        email: 'phone@gmail.com',
-        password: encryptedPassword,
-        admin: false
-      },{
-        email: 'user@gmail.com',
-        password: encryptedPassword,
-        admin: false
-      }]).exec(function (err, createdUser) {
-        if (err) {
-          return cb(err);
+          User.create([{
+            email: 'admin@gmail.com',
+            password: encryptedPassword,
+            admin: true
+          }, {
+            email: 'phone@gmail.com',
+            password: encryptedPassword,
+            admin: false
+          }, {
+            email: 'user@gmail.com',
+            password: encryptedPassword,
+            admin: false
+          }]).exec(function (err, createdUser) {
+            if (err) {
+              return cb(err);
+            }
+            return cb();
+          });
         }
-        return cb();
       });
+
     }
   });
+
+
 };
