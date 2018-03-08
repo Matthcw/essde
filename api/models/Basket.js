@@ -10,21 +10,16 @@ module.exports = {
   migrate: 'drop',
   
   schema: 'true',
-
+  
   attributes: {
-    id: {
-      type: 'integer',
-      unique: true,
-      autoIncrement: true
-    },
     price: {
       type: 'float'
     },
     items: {
       type: 'string'
     },
-    userId: {
-      type: 'integer'
+    owner: {
+      model: 'user'
     }
   }
 

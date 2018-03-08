@@ -11,14 +11,7 @@ module.exports = {
   
   schema: 'true',
 
-  autoPK: false,
-
   attributes: {
-    id: {
-      type: 'integer',
-      primaryKey: true,
-      autoIncrement: true
-    },
     price: {
       type: 'float'
     },
@@ -31,11 +24,11 @@ module.exports = {
     location_lng: {
       type: 'float'
     },
-    userId: {
-      type: 'objectid'
+    owner: {
+      model: 'user'
     },
-    deliverUserId: {
-      type: 'objectid',
+    deliveringUser: {
+      model: 'user',
       defaultsTo: null
     },
     completed: {

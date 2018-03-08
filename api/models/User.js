@@ -11,14 +11,7 @@ module.exports = {
 
   schema: 'true',
 
-  autoPK: false,
-
   attributes: {
-    id: {
-      type: 'integer',
-      primaryKey: true,
-      autoIncrement: true
-    },
     email: {
       type: 'string',
       email: 'true',
@@ -26,6 +19,17 @@ module.exports = {
     },
     password: {
       type: 'string'
+    },
+    // Now that I have order and delivery associations
+    // is there a need for the booleans?
+    orders: {
+      collection:'order'
+    },
+    deliveries: {
+      collection:'order'
+    },
+    basketItems: {
+      collection: 'basket'
     },
     ordering: {
       type: 'boolean',
@@ -49,4 +53,3 @@ module.exports = {
     },
   }
 };
-

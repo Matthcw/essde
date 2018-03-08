@@ -188,7 +188,7 @@ module.exports = {
 
         User.findOne({ email: req.param('email') }).exec(function (err, userFound) {
             if (err) return res.negotiate(err);
-            if (userFound.length < 1) return res.notFound();
+            if (!userFound) return res.notFound();
 
             Passwords.checkPassword({
                 passwordAttempt: req.param('password'),
@@ -203,7 +203,8 @@ module.exports = {
                 success: function () {
                     if (userFound.deleted) return res.forbidden("Your account has been deleted.");
                     if (userFound.banned) return res.forbidden("You've been banned.");
-                    req.session.userId = userFound.id;
+                    sails.log.debug('Logged in userID:' + userFound.id);
+                    req.session.userId = User.mongo.objectId(userFound.id);
 
                     // Clear any orders they made but were never completed
                     Order.update({ userId: userFound.id }, { deleted: true }).exec(function (err, order) {

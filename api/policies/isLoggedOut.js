@@ -1,6 +1,7 @@
 module.exports = function isLoggedOut(req, res, next) {
     
     if(!req.session.userId) {
+        sails.log.debug('LoggedOut req.session.userId:' + req.session.userId);        
         sails.log.debug('Calling next() from isLoggedOut()');                      
         return next();
     }
