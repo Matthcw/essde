@@ -18,8 +18,8 @@ module.exports = {
     items: {
       type: 'string'
     },
-    userId: {
-      type: 'objectid'
+    owner: {
+      model: 'user'
     }
   }
 

@@ -24,11 +24,11 @@ module.exports = {
     location_lng: {
       type: 'float'
     },
-    userId: {
-      type: 'integer'
+    owner: {
+      model: 'user'
     },
-    deliverUserId: {
-      type: 'integer',
+    deliveringUser: {
+      model: 'user',
       defaultsTo: null
     },
     completed: {
