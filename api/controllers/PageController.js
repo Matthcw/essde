@@ -55,13 +55,15 @@ module.exports = {
                 completed: false,
                 deleted: false,
                 or: [
-                    { userId: req.session.userId },
-                    { deliverUserId: req.session.userId }, /// Change this to check for your delivery OR order, if you have none, go back to /orders, you shouldnt be on this page otherwise
+                    { owner: foundUser.id },
+                    { deliveringUser: foundUser.id }, /// Change this to check for your delivery OR order, if you have none, go back to /orders, you shouldnt be on this page otherwise
                 ]
             }).exec(function (err, ownOrderOrDelivery) {
                 if (err) return res.negotiate(err);
 
                 checkIfUserHasOwnOrderOrDelivery(req, res, ownOrderOrDelivery, foundUser.id);
+                
+                if(ownOrderOrDelivery) return;
 
                 sails.log.debug(`{UserId:${req.session.userId}} has not got their own order, search for this order in Order model`);
 
@@ -95,9 +97,11 @@ module.exports = {
 };
 
 function showPage(req, res, cb) {
-
+    sails.log.debug('req.session.userId ' + req.session);
     //Find out why the session and database thing aren't matching
-    User.findOne({ id: User.mongo.objectId(req.session.userId) }).exec(function (err, user) {
+    User.findOne({ 
+        id: req.session.userId 
+    }).exec(function (err, user) {
         if (err) return res.negotiate(err);
 
         if (!user) {
@@ -155,7 +159,7 @@ function checkIfUserHasOwnOrderOrDelivery(req, res, ownOrderOrDelivery, foundUse
                     me,
                     order: {
                         id: ownOrderOrDelivery.id,
-                        userId: foundUser.id
+                        userId: foundUserId
                     }
                 });
             });
@@ -191,7 +195,7 @@ function checkIfOrderExists(req, res, order, foundUserId) {
         // If you get here, order exists 
 
         // If this order currently has a user delivering it, 
-        if (order.deliverUserId) {
+        if (order.deliveringUser) {
             // This order is being delivered by another user                        
             sails.log.debug(`{OrderId:${order.id}} is being delivered by another user, {UserId:${order.deliveringUser}} 
                         redirect to /orders`);
@@ -199,7 +203,7 @@ function checkIfOrderExists(req, res, order, foundUserId) {
         } else {
             sails.log.debug(`No one is delivering this order {Order:${order.id}},
                     make this user the delivering user {UserId:${req.session.userId}}`);
-            makeUserTheOrderDeliverer(order.id, foundUserId);
+            makeUserTheOrderDeliverer(req, res, order.id, foundUserId);
         }
     });
 
