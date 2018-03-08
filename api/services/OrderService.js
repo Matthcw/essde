@@ -36,7 +36,7 @@ module.exports = {
                     // User has no order
                     // Only retrive orders that aren't currently being delivered
                     Order.find({
-                        deliverUser: null,
+                        deliveringUser: null,
                         completed: false,
                         deleted: false
                     }).exec(function (err, openOrders) {
