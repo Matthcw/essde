@@ -50,7 +50,7 @@ angular.module('essde').controller('orderItemPageController', [
 
         // Join room
         io.socket.put('/api/v1/order/joinorderitemroom', function onSuccess(resData, jwData) {
-            console.log("Chat successfully joined: " + resData.chat);
+            console.log("Chat successfully joined: " + resData.room);
         });
 
         // When a delivering user joins

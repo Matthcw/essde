@@ -112,42 +112,49 @@ module.exports = {
         // No need to check for ID, you will only have at most ONE order 
         // associated with yourself in the orders table, delete this.
 
-        //Search database for existing order associated with this user
-        Order.findOne({
-            userId: req.session.userId,
-            completed: false,
-            deleted: false
-        }).exec(function (err, order) {
-            if (err) return res.negotiate(err);
+        User.findOne({
+            id: req.session.userId
+        }).exec(function (err, foundUser) {
+            if (err) return res.negotiate;
+            if (!foundUser) return res.notFound();
+            //Search database for existing order associated with this user
+            Order.findOne({
+                owner: foundUser.id,
+                completed: false,
+                deleted: false
+            }).exec(function (err, order) {
+                if (err) return res.negotiate(err);
 
-            // There is an order associated with this user
-            if (order) {
-                sails.log.debug(`user has an order to complete {OrderId:${order.id}, UserId:${req.session.userId}}`);
+                // There is an order associated with this user
+                if (order) {
+                    sails.log.debug(`user has an order to complete {OrderId:${order.id}, UserId:${req.session.userId}}`);
 
-                // Can only complete order if they are they are the one ordering
-                if (order.userId == req.session.userId) {
-                    // Clear any orders they have started
-                    Order.update({ userId: req.session.userId }, { completed: true }).exec(function (err, completedOrder) {
-                        if (err) return res.negotiate(err);
-                        if (completedOrder) {
+                    // Can only complete order if they are they are the one ordering
+                    if (order.owner == req.session.userId) {
+                        // Clear any orders they have started
+                        Order.update({ owner: foundUser.id }, { completed: true }).exec(function (err, completedOrder) {
+                            if (err) return res.negotiate(err);
 
-                            // Notify delivering user that order has been completed
-                            sails.log.debug('socket broadcast: ordercomplete room: order' + order.id);
-                            sails.sockets.broadcast('order' + order.id, 'ordercomplete');
-                            sails.sockets.broadcast('vieworders', 'ordercompleted', order.id);
+                            completedOrder = completedOrder[0];
+                            if (completedOrder) {
 
-                            sails.log.debug(`complete own order successful {OrderId:${order.id}, UserId:${req.session.userId}}`);
-                            return res.json(completedOrder);
-                        }
-                    });
+                                // Notify delivering user that order has been completed
+                                sails.log.debug('socket broadcast: ordercomplete room: order' + completedOrder.id);
+                                sails.sockets.broadcast('order' + completedOrder.id, 'ordercomplete');
+                                sails.sockets.broadcast('vieworders', 'ordercompleted', completedOrder.id);
+
+                                sails.log.debug(`complete own order successful {OrderId:${completedOrder.id}, UserId:${req.session.userId}}`);
+                                return res.json(completedOrder);
+                            }
+                        });
+                    }
+                } else {
+                    //No orders in here are associated with this user
+                    sails.log.debug(`user has no order or delivery to complete {UserId:${req.session.userId}}`);
+                    return res.notModified();
                 }
-            } else {
-                //No orders in here are associated with this user
-                sails.log.debug(`user has no order or delivery to complete {UserId:${req.session.userId}}`);
-                return res.notModified();
-            }
 
-
+            });
 
         });
 
@@ -203,13 +210,13 @@ module.exports = {
                         });
                     } else {
                         sails.log.debug(`clearing own delivery {OrderId:${order.id}, UserId:${req.session.userId}}`);
-                        
+
                         // Clear any orders they were delivering but were never completed
                         Order.update({ deliveringUser: foundUser.id }, { deliveringUser: null }).exec(function (err, deletedOrder) {
                             if (err) return res.negotiate(err);
 
                             sails.log.debug('deletedOrder ' + JSON.stringify(deletedOrder));
-                            
+
                             deletedOrder = deletedOrder[0];
                             if (deletedOrder) {
 
