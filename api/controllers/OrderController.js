@@ -40,7 +40,7 @@ module.exports = {
                 sails.sockets.join(req, 'order' + order.id);
 
                 sails.log.debug(`User joined orderitem room            
-            {UserId:${req.session.userId}, OrderId:${req.param('id')}}`);
+            {UserId:${req.session.userId}, OrderId:${order.id}}`);
 
                 return res.json({ room: 'order' + order.id });
             });

@@ -37,11 +37,11 @@ angular.module('essde').controller('orderItemPageController', [
         .then(function onSuccess(sailsResponse) {
             data = sailsResponse.data;
             $scope.hasOrderer = (data.deleted || data.completed) ? false : true// always true if this is the orderer and is true by default
-            $scope.hasDeliverer = (data.deliverUserId) ? true : false; // always true if this is the deliverer
+            $scope.hasDeliverer = (data.deliveringUser) ? true : false; // always true if this is the deliverer
             $scope.orderDeleted = data.deleted;
             $scope.orderComplete = data.completed;
             console.log(data);
-            console.log("order data.deliverUserId: " + JSON.stringify(data.deliverUserId));
+            console.log("order data.deliverUserId: " + JSON.stringify(data.deliveringUser));
         })
         .catch(function onError(data) {
             console.error("An unexpected error occured " + sailsResponse.statusText);

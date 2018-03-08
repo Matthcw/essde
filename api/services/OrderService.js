@@ -132,6 +132,7 @@ module.exports = {
                         if (completedOrder) {
 
                             // Notify delivering user that order has been completed
+                            sails.log.debug('socket broadcast: ordercomplete room: order' + order.id);
                             sails.sockets.broadcast('order' + order.id, 'ordercomplete');
                             sails.sockets.broadcast('vieworders', 'ordercompleted', order.id);
 
@@ -181,14 +182,17 @@ module.exports = {
                 // There is an order associated with this user
                 if (order) {
                     sails.log.debug(`user has an order to delete {OrderId:${order.id}, UserId:${req.session.userId}}`);
+                    sails.log.debug('order.owner == req.session.userId = ' + (order.owner == req.session.userId));
 
                     if (order.owner == req.session.userId) {
+                        sails.log.debug(`deleting own order {OrderId:${order.id}, UserId:${req.session.userId}}`);
                         // Clear any orders they have started
                         Order.update({ owner: foundUser.id }, { deleted: true }).exec(function (err, deletedOrder) {
                             if (err) return res.negotiate(err);
                             if (deletedOrder) {
 
                                 // Notify delivering user that order has been cancelled
+                                sails.log.debug('socket broadcast: ordererleft room: order' + order.id);
                                 sails.sockets.broadcast('order' + order.id, 'ordererleft');
                                 sails.sockets.broadcast('vieworders', 'orderdeleted', order.id);
 
@@ -198,12 +202,19 @@ module.exports = {
                             }
                         });
                     } else {
+                        sails.log.debug(`clearing own delivery {OrderId:${order.id}, UserId:${req.session.userId}}`);
+                        
                         // Clear any orders they were delivering but were never completed
                         Order.update({ deliveringUser: foundUser.id }, { deliveringUser: null }).exec(function (err, deletedOrder) {
                             if (err) return res.negotiate(err);
+
+                            sails.log.debug('deletedOrder ' + JSON.stringify(deletedOrder));
+                            
+                            deletedOrder = deletedOrder[0];
                             if (deletedOrder) {
 
                                 // Notify ordering user that delivering user has left
+                                sails.log.debug('socket broadcast: delivererleft room: order' + deletedOrder.id);
                                 sails.sockets.broadcast('order' + deletedOrder.id, 'delivererleft');
                                 sails.sockets.broadcast('vieworders', 'delivererunassigned', deletedOrder);
 
@@ -217,9 +228,6 @@ module.exports = {
                     sails.log.debug(`user has no order or delivery to delete {UserId:${req.session.userId}}`);
                     return res.notModified();
                 }
-
-
-
             });
         });
 

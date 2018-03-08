@@ -125,8 +125,10 @@ function makeUserTheOrderDeliverer(req, res, orderId, foundUserId) {
     // There is currently no user delivering the order, set this user as the delivery user
     Order.update({ id: orderId }, { deliveringUser: foundUserId }).exec(function (err, updatedOrder) {
         if (err) return res.negotiate(err);
-
+        
+        updatedOrder = updatedOrder[0];
         // socket broadcast to room of: order.id, that a user has connected 
+        sails.log.debug('socket broadcast: delivererjoined room: order' + updatedOrder.id);
         sails.sockets.broadcast('order' + updatedOrder.id, 'delivererjoined');
         sails.sockets.broadcast('vieworders', 'delivererassigned', updatedOrder.id);
 

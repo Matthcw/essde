@@ -36,9 +36,11 @@
       <p class="text-success font-weight-bold">{{order.items.length > 4 ? '£3.00' : '£1.50'}}</p>
 
       <p>Templeman Library (East)</p>
-
+      <!-- <p ng-show="order.owner == me.id">{{order.owner == me.id}}</p>
+      <p ng-show="order.owner">userId {{order.owner}}</p>
+      <p ng-show="me.id">me.id {{me.id}}</p> -->
       <button class="btn btn-lg" id="btn-complete" type="button" ng-click="markOrderComplete()" ng-class="{'btn-success': !complete, 'btn-faded': complete}"
-        ng-show="order.userId == me.id && hasDeliverer">
+        ng-show="order.owner == me.id && hasDeliverer">
         <span ng-hide="complete">Mark as Complete</span>
         <span ng-show="complete">Mark as Incomplete</span>
         
