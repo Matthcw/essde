@@ -10,34 +10,40 @@ module.exports = {
     joinOrderItemsRoom: function (req, res) {
         if (!req.isSocket) {
             sails.log.debug(`not a socket connection joinOrderItemsRoom()`);
-            
+
             return res.badRequest();
         }
 
         sails.log.debug(`User attempting to join an orderitem room
         {UserId:${req.session.userId}}`);
-        
-        // Only join chat rooms with a users order
-        Order.findOne({
-            completed: false,
-            deleted: false,
-            or: [
-                { userId: req.session.userId },
-                { deliverUserId: req.session.userId }]
-        }).exec(function (err, order) {
-            if (err) return res.negotiate(err);
 
-            if (!order) {
-                sails.log.debug(`User has no orderitem room to join {UserId:${req.session.userId}}`);
-                return res.notFound();
-            }            
-            
-            sails.sockets.join(req, 'order' + order.id);
+        User.findOne({
+            id: req.session.userId
+        }).exec(function (err, foundUser) {
+            if (err) return res.negotiate;
+            if (!foundUser) return res.notFound();
+            // Only join chat rooms with a users order
+            Order.findOne({
+                completed: false,
+                deleted: false,
+                or: [
+                    { owner: foundUser.id },
+                    { deliveringUser: foundUser.id }]
+            }).exec(function (err, order) {
+                if (err) return res.negotiate(err);
 
-            sails.log.debug(`User joined orderitem room            
+                if (!order) {
+                    sails.log.debug(`User has no orderitem room to join {UserId:${req.session.userId}}`);
+                    return res.notFound();
+                }
+
+                sails.sockets.join(req, 'order' + order.id);
+
+                sails.log.debug(`User joined orderitem room            
             {UserId:${req.session.userId}, OrderId:${req.param('id')}}`);
 
-            return res.json({room: 'order' + order.id});
+                return res.json({ room: 'order' + order.id });
+            });
         });
 
     },
@@ -45,51 +51,58 @@ module.exports = {
     joinViewOrdersRoom: function (req, res) {
         if (!req.isSocket) {
             sails.log.debug(`not a socket connection joinViewOrdersRoom()`);
-            
+
             return res.badRequest();
         }
 
         sails.sockets.join(req, 'vieworders');
-        
+
         sails.log.debug(`User joined the orders room            
         {UserId:${req.session.userId}, OrderId:${req.param('id')}}`);
 
-        return res.json({room: 'vieworders'});
+        return res.json({ room: 'vieworders' });
     },
 
     chat: function (req, res) {
         if (!req.isSocket) {
             sails.log.debug(`not a socket connection chat()`);
-            
+
             return res.badRequest();
         }
 
         sails.log.debug(`User attempting to send a chat message
         {UserId:${req.session.userId}}`);
-        // Only send chat messages to rooms with a users order
-        Order.findOne({
-            completed: false,
-            deleted: false,
-            or: [
-                { userId: req.session.userId },
-                { deliverUserId: req.session.userId }]
-        }).exec(function (err, order) {
-            if (err) return res.negotiate(err);
 
-            if (!order) {
-                sails.log.debug(`User has no order to message in {UserId:${req.session.userId}}`);
-                return res.notFound();
-            }            
-            
-            sails.sockets.broadcast('order' + order.id, 'chat', {
-                message: req.param('message'),
-                userId: req.session.userId
-            });
+        User.findOne({
+            id: req.session.userId
+        }).exec(function (err, foundUser) {
+            if (err) return res.negotiate;
+            if (!foundUser) return res.notFound();
+            // Only send chat messages to rooms with a users order
+            Order.findOne({
+                completed: false,
+                deleted: false,
+                or: [
+                    { owner: foundUser.id },
+                    { deliveringUser: foundUser.id }]
+            }).exec(function (err, order) {
+                if (err) return res.negotiate(err);
 
-            sails.log.debug(`User sent chat message in order            
+                if (!order) {
+                    sails.log.debug(`User has no order to message in {UserId:${req.session.userId}}`);
+                    return res.notFound();
+                }
+
+                sails.sockets.broadcast('order' + order.id, 'chat', {
+                    message: req.param('message'),
+                    userId: req.session.userId
+                });
+
+                sails.log.debug(`User sent chat message in order            
             {UserId:${req.session.userId}, OrderId:${req.param('id')}}`);
 
-            return res.json({chat: 'messaged'});
+                return res.json({ chat: 'messaged' });
+            });
         });
 
     },
@@ -97,37 +110,43 @@ module.exports = {
     deliveryUserLocation: function (req, res) {
         if (!req.isSocket) {
             sails.log.debug(`not a socket connection deliveryUserLocation()`);
-            
+
             return res.badRequest();
         }
 
         sails.log.debug(`User attempting to send a location message
         {UserId:${req.session.userId}}`);
 
-        // Only location messages to rooms with a users order
-        Order.findOne({
-            completed: false,
-            deleted: false,
-            or: [
-                { userId: req.session.userId },
-                { deliverUserId: req.session.userId }]
-        }).exec(function (err, order) {
-            if (err) return res.negotiate(err);
+        User.findOne({
+            id: req.session.userId
+        }).exec(function (err, foundUser) {
+            if (err) return res.negotiate;
+            if (!foundUser) return res.notFound();
+            // Only location messages to rooms with a users order
+            Order.findOne({
+                completed: false,
+                deleted: false,
+                or: [
+                    { owner: foundUser.id },
+                    { deliveringUser: foundUser.id }]
+            }).exec(function (err, order) {
+                if (err) return res.negotiate(err);
 
-            if (!order) {
-                sails.log.debug(`User has no order to message in {UserId:${req.session.userId}}`);
-                return res.notFound();
-            }            
-            
-            sails.sockets.broadcast('order' + order.id, 'location', {
-                lat: req.param('lat'),
-                lng: req.param('lng'),
-            });
+                if (!order) {
+                    sails.log.debug(`User has no order to message in {UserId:${req.session.userId}}`);
+                    return res.notFound();
+                }
 
-            sails.log.debug(`User sent location message in order            
+                sails.sockets.broadcast('order' + order.id, 'location', {
+                    lat: req.param('lat'),
+                    lng: req.param('lng'),
+                });
+
+                sails.log.debug(`User sent location message in order            
             {UserId:${req.session.userId}, OrderId:${req.param('id')}}`);
 
-            return res.json({location: 'sent'});
+                return res.json({ location: 'sent' });
+            });
         });
     },
 
