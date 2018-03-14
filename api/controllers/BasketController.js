@@ -58,9 +58,10 @@ module.exports = {
                 owner: foundUser.id
             }).exec(function(err, destroyedBasketItem) {
                 if(err) return res.negotiate(err);
+                sails.log.debug('destroyedBasketItem (before assign [0])' + JSON.stringify(destroyedBasketItem));
                 destroyedBasketItem = destroyedBasketItem[0];
-                sails.log.debug('req.param(id) ' + req.param('id'));
-                sails.log.debug('destroyedBasketItem ' + JSON.stringify(destroyedBasketItem));
+                sails.log.debug('req.param(id) 2' + req.param('id'));
+                sails.log.debug('destroyedBasketItem (after assign [0])' + JSON.stringify(destroyedBasketItem));
                 sails.log.debug(`user removed item from basket {BasketItem:${destroyedBasketItem.items}, UserId:${req.session.userId}}`);            
                 
                 foundUser.basketItems.remove(destroyedBasketItem.id);

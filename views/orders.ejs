@@ -6,10 +6,12 @@
               <div class="card" style="width: 20rem;" >
                   <div class="card-body">
                       <h4 class="card-title">£{{order.price}}</h4>
-                      <h6 class="card-subtitle mb-2 text-muted">{{order.items}}</h6>
-                      <p class="card-text">In Darwin College</p>
+                      <h6 class="card-subtitle mb-2 text-muted">Waiting for Delivery</h6>
+                      <p class="card-text">
+                          <ul>
+                        <li ng-repeat="orderItem in order.items">{{orderItem}}</li>
+                      </ul></p>
                       <a href="/order/{{order.id}}" class="card-link btn btn-success">Do Delivery</a>
-                      <a href="#" class="card-link">Another link</a>
                   </div>
               </div>
 

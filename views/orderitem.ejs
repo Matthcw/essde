@@ -24,8 +24,9 @@
     <p ng-show="orderCompleted">Order Complete! <a href="/orders"> go back</a></p>
 
   <div class="row" ng-show="hasOrderer">
-    <div class="col-4 pt-5 px-5">
-      <h1 class="display-3">Order #{{order.id}}</h1>
+    <div class="col-sm-4 pt-5 px-5 col-12">
+      <h1 class="display-3">Order</h1>
+      <p>Order ID: <b>#{{order.id}}</b></p>
       <h4>Items:</h4>
       <ul>
         <li ng-repeat="orderItem in order.items">{{orderItem}}</li>
@@ -33,13 +34,13 @@
       <h4>Item Total:</h4>
       <p class- "display-4">£{{order.price}}</p>
       <h4>Delivery Fee:</h4>
-      <p class="text-success font-weight-bold">{{order.items.length > 4 ? '£3.00' : '£1.50'}}</p>
+      <p class="text-success font-weight-bold">{{order.items.length > 6 ? '£5.00' : '£2.50'}}</p>
 
       <p>Templeman Library (East)</p>
       <!-- <p ng-show="order.owner == me.id">{{order.owner == me.id}}</p>
       <p ng-show="order.owner">userId {{order.owner}}</p>
       <p ng-show="me.id">me.id {{me.id}}</p> -->
-      <button class="btn btn-lg" id="btn-complete" type="button" ng-click="markOrderComplete()" ng-class="{'btn-success': !complete, 'btn-faded': complete}"
+      <button class="btn btn-lg " id="btn-complete" type="button" ng-click="markOrderComplete()" ng-class="{'btn-success': !complete, 'btn-faded': complete}"
         ng-show="order.owner == me.id && hasDeliverer">
         <span ng-hide="complete">Mark as Complete</span>
         <span ng-show="complete">Mark as Incomplete</span>
@@ -48,12 +49,17 @@
       <span ng-hide="hasDeliverer">Waiting for Deliverer...</span>
       <button class="btn btn-danger btn-lg" id="btn-cancel" type="button" ng-click="cancelDelivery()">Cancel Delivery</button>
     </div>
-    <div class="col-4 pt-5 px-5">
+
+    <div class="col-sm-4 pt-5 px-5 col-12">
       <h4>Deliver To:</h4>
       <div id="map-orderitem"></div>
     </div>
-    <div class="col-4 p-2 bg-light">
+    <div class="col-sm-4 p-2 bg-light col-12">
       <h2 class="display-6">Chat</h2>
+      <div id="chat-window" style="max-height:300px; overflow-y:scroll">
+          <p ng-repeat="chat in chats">{{chat.message}}</p>
+  
+        </div>
       <div class="input-group">
         <input type="text" class="form-control" id="chatBox" placeholder="Where are you?" ng-model="chatMessage">
         <span class="input-group-btn">
@@ -61,10 +67,7 @@
         </span>
       </div>
 
-      <div id="chat-window" style="max-height:300px; overflow-y:scroll">
-        <p ng-repeat="chat in chats">{{chat.message}}</p>
-
-      </div>
+      
     </div>
   </div>
 </div>
