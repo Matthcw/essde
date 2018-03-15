@@ -18,7 +18,7 @@
           <p ng-repeat="basketItem in basket">{{basketItem.items}} - £{{basketItem.price}}
             <a href="#" ng-click="removeFromBasket(basketItem.id)">x</a>
           </p>
-          <p>Fee: {{basket.length > 4 ? '£3.00' : '£1.50'}}</p>
+          <p>Fee: {{basket.length > 4 ? '£5.00' : '£2.50'}}</p>
           <p>Your Location:(Google Maps)</p>
         </div>
         <a class="btn btn-warning" href="/order/checkout/">Checkout</a>
