@@ -120,7 +120,7 @@ function showPage(req, res, cb) {
     });
 }
 
-function makeUserTheOrderDeliverer(req, res, orderId, foundUserId) {
+function makeUserTheOrderDeliverer(req, res, orderId, foundUserId, orderUserId) {
 
     // There is currently no user delivering the order, set this user as the delivery user
     Order.update({ id: orderId }, { deliveringUser: foundUserId }).exec(function (err, updatedOrder) {
@@ -137,7 +137,7 @@ function makeUserTheOrderDeliverer(req, res, orderId, foundUserId) {
                 me,
                 order: {
                     id: updatedOrder.id,
-                    userId: foundUserId
+                    userId: updatedOrder.owner
                 }
             });
         });
@@ -161,7 +161,7 @@ function checkIfUserHasOwnOrderOrDelivery(req, res, ownOrderOrDelivery, foundUse
                     me,
                     order: {
                         id: ownOrderOrDelivery.id,
-                        userId: foundUserId
+                        userId: ownOrderOrDelivery.owner
                     }
                 });
             });

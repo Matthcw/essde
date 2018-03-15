@@ -22,13 +22,13 @@ angular.module('essde').controller('orderItemPageController', [
     function ($scope, $http, $timeout) {
 
         $scope.me = window.SAILS_LOCALS.me;
-        $scope.order = window.SAILS_LOCALS.order;
+        $scope.theOrder = window.SAILS_LOCALS.order;
         $scope.complete = false;
         $scope.chats = [];
 
         $scope.hasOrderer = true // always true if this is the orderer and is true by default
-        $scope.hasDeliverer = ($scope.order.userId != $scope.me.id) ? true : false; // always true if this is the deliverer
-        $scope.wasDeliverer = ($scope.order.userId != $scope.me.id) ? true : false; // always true if this is the deliverer
+        $scope.hasDeliverer = ($scope.theOrder.userId != $scope.me.id) ? true : false; // always true if this is the deliverer
+        $scope.wasDeliverer = ($scope.theOrder.userId != $scope.me.id) ? true : false; // always true if this is the deliverer
         $scope.orderDeleted = false;
         $scope.orderComplete = false;
 
@@ -103,12 +103,15 @@ angular.module('essde').controller('orderItemPageController', [
             }, function onSuccess(resData, jwData) { });
 
         }
-
-        if ($scope.order.userId != $scope.me.id) {
+        
+        if ($scope.theOrder.userId != $scope.me.id) {
+            
+            console.log($scope.theOrder.userId != $scope.me.id)
             // Must be the delivery user
             var timer = setInterval(function () {
                 if (!navigator.geolocation) return alert("No location access. Use a better browser bro...");
-
+                console.log($scope.theOrder.userId + " != " + $scope.me.id)
+                console.log("sending location to ordering user...")
                 navigator.geolocation.getCurrentPosition(function (position) {
                     lat = position.coords.latitude;
                     lng = position.coords.longitude;
@@ -130,8 +133,8 @@ angular.module('essde').controller('orderItemPageController', [
             // New location has come through, clear time out if it's set
             clearTimeout(timeout);
             console.log('new Location received', e);
-            return false;
-            //moveDeliveryUserMarker({ coords: { lat: e.lat, lng: e.lng } });
+            //return false;
+            moveDeliveryUserMarker({ coords: { lat: e.lat, lng: e.lng } });
             //Remove marker after 5 seconds though
             timeout = setTimeout(function () {
                 marker.setMap(null);
@@ -192,7 +195,7 @@ angular.module('essde').controller('orderItemPageController', [
             // Change to socket connection
             $http.delete('/api/v1/order/')
                 .then(function onSuccess(sailsResponse) {
-                    if ($scope.order.userId == window.SAILS_LOCALS.me.id) {
+                    if ($scope.theOrder.userId == window.SAILS_LOCALS.me.id) {
                         document.location.href = '/dashboard';
                     } else {
                         document.location.href = '/orders';

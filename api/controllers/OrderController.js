@@ -141,9 +141,9 @@ module.exports = {
                     lat: req.param('lat'),
                     lng: req.param('lng'),
                 });
-
+                sails.log.debug('order.id ' + order.id);
                 sails.log.debug(`User sent location message in order            
-            {UserId:${req.session.userId}, OrderId:${req.param('id')}}`);
+            {UserId:${req.session.userId}, OrderId:${order.id}}`);
 
                 return res.json({ location: 'sent' });
             });
