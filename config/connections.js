@@ -67,17 +67,17 @@ module.exports.connections = {
   //   database: 'your_mongo_db_name_here' //optional
   // },
 
-  myMongoDbServer: {
-    adapter: 'sails-mongo',
-    url: 'mongodb://heroku_m5p7n2g8:pdjt8q8e4s673s1h6ae1lcoit5@ds157818.mlab.com:57818/heroku_m5p7n2g8',
-    //ssl: true
-  },
-
   // myMongoDbServer: {
   //   adapter: 'sails-mongo',
-  //   host: 'localhost',
-  //   database: 'localhost'
+  //   url: 'mongodb://heroku_m5p7n2g8:pdjt8q8e4s673s1h6ae1lcoit5@ds157818.mlab.com:57818/heroku_m5p7n2g8',
+  //   //ssl: true
   // },
+
+  myMongoDbServer: {
+    adapter: 'sails-mongo',
+    host: 'localhost',
+    database: 'localhost'
+  },
 
   /***************************************************************************
   *                                                                          *

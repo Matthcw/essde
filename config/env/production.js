@@ -28,6 +28,16 @@ module.exports = {
       //ssl:true
     }
   },
+
+  session: {
+    adapter: 'redis',
+    url: process.env.REDISTOGO_URL
+  },
+
+  sockets: {
+    adapter: 'sails.io-redis',
+    url: process.env.REDISTOGO_URL
+  }
   
 
   /***************************************************************************
