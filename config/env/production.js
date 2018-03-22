@@ -35,7 +35,7 @@ module.exports = {
   },
 
   sockets: {
-    adapter: 'sails.io-redis',
+    adapter: 'socket.io-redis',
     url: process.env.REDISTOGO_URL
   }
   
