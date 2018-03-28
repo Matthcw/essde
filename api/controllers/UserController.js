@@ -30,8 +30,8 @@ module.exports = {
             fromName: 'admin@essde.co.uk',
         }).exec({
             error: function (err) {
-                if (err) return res.negotiate(err);
-                console.log(err);
+                if (err) console.log("4N ERROR: " + err); return res.negotiate(err);
+                
             },
             success: function () {
                 return res.ok();
@@ -175,6 +175,13 @@ module.exports = {
                 if (userUpdated.length === 0) return res.notFound();
                 return res.ok();
             });
+    },
+
+    whoAmI: function (req, res) {
+        return { me: {
+            id: req.session.id
+        }
+    }
     },
 
     login: function (req, res) {

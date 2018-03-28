@@ -37,7 +37,12 @@ module.exports = {
   sockets: {
     adapter: 'socket.io-redis',
     url: process.env.REDISTOGO_URL
-  }
+  },
+
+  mailgun: {
+    apiKey: process.env.MAILGUN_API_KEY,
+    domain: process.env.MAILGUN_DOMAIN
+  },
   
 
   /***************************************************************************

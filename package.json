@@ -33,7 +33,8 @@
   },
   "scripts": {
     "debug": "node debug app.js",
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "SET NODE_ENV=test & mocha --recursive -t 100000"
   },
   "main": "app.js",
   "repository": {
@@ -41,5 +42,10 @@
     "url": "git://github.com/anonymous node/sails user/essde_api.git"
   },
   "author": "anonymous node/sails user",
-  "license": ""
+  "license": "",
+  "devDependencies": {
+    "mocha": "^5.0.4",
+    "sails-memory": "^0.10.7",
+    "supertest": "^3.0.0"
+  }
 }

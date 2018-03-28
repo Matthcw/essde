@@ -38,10 +38,11 @@ module.exports.routes = {
     'GET /api/v1/basket': 'BasketController.findItems',
     'POST /api/v1/basket': 'BasketController.createItem',
     'DELETE /api/v1/basket/:id': 'BasketController.destroyItem',
-    'DELETE /basket': 'BasketController.destroyItems',
+    'DELETE /api/v1/basket': 'BasketController.destroyItems',
     
     'POST /api/v1/user/signup': 'UserController.signup',
     'GET /api/v1/user/admin': 'UserController.adminUsers',
+    'GET /api/v1/user/whoami': 'UserController.whoAmI',
     'PUT /api/v1/user/admin/:id': 'UserController.updateAdmin',
     'PUT /api/v1/user/banned/:id': 'UserController.updateBanned',
     'PUT /api/v1/user/deleted/:id': 'UserController.updateDeleted'
